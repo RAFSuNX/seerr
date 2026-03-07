@@ -132,7 +132,7 @@ const Layout = ({ children }: LayoutProps) => {
 
         <main className={`relative z-0 focus:outline-none ${isAmoled ? 'top-0' : 'top-16'}`} tabIndex={0}>
           <div className="mb-6">
-            <div className={`max-w-8xl mx-auto px-4 ${isAmoled ? 'pt-20' : ''}`}>{children}</div>
+            <div className={`max-w-8xl mx-auto px-4 ${isAmoled ? 'pt-16' : ''}`}>{children}</div>
           </div>
         </main>
       </div>
