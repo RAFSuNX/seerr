@@ -152,34 +152,7 @@ const Slider = ({
 
   return (
     <div className="relative" data-testid="media-slider">
-      {isAmoled ? (
-        <div className="absolute right-0 -mt-9 flex gap-1">
-          <button
-            className={`flex h-6 w-6 items-center justify-center rounded-full transition ${
-              scrollPos.isStart
-                ? 'text-white/15 cursor-default'
-                : 'bg-white/[0.06] text-white/50 hover:bg-white/10 hover:text-white ring-1 ring-white/10'
-            }`}
-            onClick={() => slide(Direction.LEFT)}
-            disabled={scrollPos.isStart}
-            type="button"
-          >
-            <ChevronLeftIcon className="h-3.5 w-3.5" />
-          </button>
-          <button
-            className={`flex h-6 w-6 items-center justify-center rounded-full transition ${
-              scrollPos.isEnd
-                ? 'text-white/15 cursor-default'
-                : 'bg-white/[0.06] text-white/50 hover:bg-white/10 hover:text-white ring-1 ring-white/10'
-            }`}
-            onClick={() => slide(Direction.RIGHT)}
-            disabled={scrollPos.isEnd}
-            type="button"
-          >
-            <ChevronRightIcon className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      ) : (
+      {!isAmoled && (
         <div className="absolute right-0 -mt-10 flex text-gray-400">
           <button
             className={`${
