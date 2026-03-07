@@ -3,8 +3,9 @@ import PersonCard from '@app/components/PersonCard';
 import Slider from '@app/components/Slider';
 import TitleCard from '@app/components/TitleCard';
 import useSettings from '@app/hooks/useSettings';
+import useTheme from '@app/hooks/useTheme';
 import { useUser } from '@app/hooks/useUser';
-import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowRightCircleIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { MediaStatus } from '@server/constants/media';
 import { Permission } from '@server/lib/permissions';
 import type {
@@ -44,6 +45,8 @@ const MediaSlider = ({
 }: MediaSliderProps) => {
   const settings = useSettings();
   const { hasPermission } = useUser();
+  const { theme } = useTheme();
+  const isAmoled = theme === 'amoled-strix';
   const { data, error, setSize, size } = useSWRInfinite<MixedResult>(
     (pageIndex: number, previousPageData: MixedResult | null) => {
       if (previousPageData && pageIndex + 1 > previousPageData.totalPages) {
@@ -177,18 +180,38 @@ const MediaSlider = ({
 
   return (
     <>
-      <div className="slider-header">
-        {linkUrl ? (
-          <Link href={linkUrl} className="slider-title min-w-0 pr-16">
-            <span className="truncate">{title}</span>
-            <ArrowRightCircleIcon />
-          </Link>
-        ) : (
-          <div className="slider-title">
-            <span>{title}</span>
+      {isAmoled ? (
+        <div className="relative mb-3 mt-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-4 w-0.5 rounded-full bg-indigo-500" />
+            <span className="text-sm font-semibold uppercase tracking-[0.14em] text-white/70">
+              {title}
+            </span>
           </div>
-        )}
-      </div>
+          {linkUrl && (
+            <Link
+              href={linkUrl}
+              className="flex items-center gap-1 text-xs font-medium text-white/35 transition hover:text-white/70"
+            >
+              See all
+              <ChevronRightIcon className="h-3.5 w-3.5" />
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className="slider-header">
+          {linkUrl ? (
+            <Link href={linkUrl} className="slider-title min-w-0 pr-16">
+              <span className="truncate">{title}</span>
+              <ArrowRightCircleIcon />
+            </Link>
+          ) : (
+            <div className="slider-title">
+              <span>{title}</span>
+            </div>
+          )}
+        </div>
+      )}
       <Slider
         sliderKey={sliderKey}
         isLoading={!data && !error}
