@@ -308,7 +308,7 @@ const TitleCard = ({
       />
       <div
         className={`relative transform-gpu cursor-default overflow-hidden bg-gray-800 bg-cover outline-none ring-1 transition duration-300 ${
-          isAmoled ? 'rounded-2xl' : 'rounded-xl'
+          isAmoled ? 'rounded-[14px]' : 'rounded-xl'
         } ${
           showDetail
             ? isAmoled
