@@ -355,7 +355,7 @@ const TitleCard = ({
               className={`pointer-events-none absolute left-2.5 top-0 z-40 flex w-7 items-center justify-center rounded-b-md bg-black/50 pb-1.5 pt-1 backdrop-blur-md ring-1 ring-white/[0.08]`}
             >
               <span
-                className={`text-[11px] font-bold ${
+                className={`text-[11px] font-semibold ${
                   mediaType === 'movie' || mediaType === 'collection'
                     ? 'text-blue-300'
                     : 'text-violet-300'
