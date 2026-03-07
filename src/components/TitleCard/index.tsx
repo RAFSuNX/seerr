@@ -349,36 +349,26 @@ const TitleCard = ({
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             fill
           />
+          {/* AMOLED tab badge — flush with card top edge */}
+          {isAmoled && (
+            <div
+              className={`pointer-events-none absolute left-2.5 top-0 z-40 flex w-7 items-center justify-center rounded-b-md bg-black/50 pb-1.5 pt-1 backdrop-blur-md ring-1 ring-white/[0.08]`}
+            >
+              <span
+                className={`text-[11px] font-bold ${
+                  mediaType === 'movie' || mediaType === 'collection'
+                    ? 'text-blue-300'
+                    : 'text-violet-300'
+                }`}
+              >
+                {mediaType === 'movie' ? 'M' : mediaType === 'collection' ? 'C' : 'S'}
+              </span>
+            </div>
+          )}
+
           <div className="absolute left-0 right-0 flex items-center justify-between p-2">
             {isAmoled ? (
-              <div className="pointer-events-none z-40 flex items-center gap-1 self-start rounded-full bg-black/40 px-2 py-1 backdrop-blur-md ring-1 ring-white/10">
-                <span
-                  className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${
-                    mediaType === 'movie' || mediaType === 'collection'
-                      ? 'bg-blue-400'
-                      : 'bg-violet-400'
-                  }`}
-                  style={{
-                    boxShadow:
-                      mediaType === 'movie' || mediaType === 'collection'
-                        ? '0 0 5px rgba(96,165,250,0.9)'
-                        : '0 0 5px rgba(167,139,250,0.9)',
-                  }}
-                />
-                <span
-                  className={`text-[10px] font-semibold uppercase tracking-[0.12em] ${
-                    mediaType === 'movie' || mediaType === 'collection'
-                      ? 'text-blue-300'
-                      : 'text-violet-300'
-                  }`}
-                >
-                  {mediaType === 'movie'
-                    ? intl.formatMessage(globalMessages.movie)
-                    : mediaType === 'collection'
-                      ? intl.formatMessage(globalMessages.collection)
-                      : intl.formatMessage(globalMessages.tvshow)}
-                </span>
-              </div>
+              <div /> /* placeholder to keep justify-between for right-side buttons */
             ) : (
               <div
                 className={`pointer-events-none z-40 self-start rounded-full border shadow-md ${
