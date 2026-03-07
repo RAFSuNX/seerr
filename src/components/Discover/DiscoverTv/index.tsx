@@ -9,7 +9,6 @@ import {
 } from '@app/components/Discover/constants';
 import FilterSlideover from '@app/components/Discover/FilterSlideover';
 import useDiscover from '@app/hooks/useDiscover';
-import useTheme from '@app/hooks/useTheme';
 import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import Error from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
@@ -51,8 +50,6 @@ const DiscoverTv = () => {
   const [showFilters, setShowFilters] = useState(false);
   const preparedFilters = prepareFilterValues(router.query);
   const updateQueryParams = useUpdateQueryParams({});
-  const { theme } = useTheme();
-  const isAmoled = theme === 'amoled-strix';
 
   const {
     isLoadingInitialData,
@@ -75,89 +72,64 @@ const DiscoverTv = () => {
   return (
     <>
       <PageTitle title={title} />
-      <FilterSlideover
-        type="tv"
-        currentFilters={preparedFilters}
-        onClose={() => setShowFilters(false)}
-        show={showFilters}
-      />
-      {isAmoled ? (
-        <div className="mb-5 flex items-center justify-between">
-          <h1 className="text-lg font-bold text-white/90">{title}</h1>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2 ring-1 ring-white/[0.08] backdrop-blur-md">
-              <BarsArrowDownIcon className="h-4 w-4 flex-shrink-0 text-white/40" />
-              <select
-                id="sortBy"
-                name="sortBy"
-                className="appearance-none bg-transparent text-xs font-medium text-white/70 outline-none"
-                value={preparedFilters.sortBy || SortOptions.PopularityDesc}
-                onChange={(e) => updateQueryParams('sortBy', e.target.value)}
-              >
-                <option value={SortOptions.PopularityDesc}>{intl.formatMessage(messages.sortPopularityDesc)}</option>
-                <option value={SortOptions.PopularityAsc}>{intl.formatMessage(messages.sortPopularityAsc)}</option>
-                <option value={SortOptions.FirstAirDateDesc}>{intl.formatMessage(messages.sortFirstAirDateDesc)}</option>
-                <option value={SortOptions.FirstAirDateAsc}>{intl.formatMessage(messages.sortFirstAirDateAsc)}</option>
-                <option value={SortOptions.TmdbRatingDesc}>{intl.formatMessage(messages.sortTmdbRatingDesc)}</option>
-                <option value={SortOptions.TmdbRatingAsc}>{intl.formatMessage(messages.sortTmdbRatingAsc)}</option>
-                <option value={SortOptions.TitleAsc}>{intl.formatMessage(messages.sortTitleAsc)}</option>
-                <option value={SortOptions.TitleDesc}>{intl.formatMessage(messages.sortTitleDesc)}</option>
-              </select>
-            </div>
-            <button
-              onClick={() => setShowFilters(true)}
-              className="flex items-center gap-2 rounded-xl bg-white/[0.06] px-3 py-2 text-xs font-medium text-white/70 ring-1 ring-white/[0.08] backdrop-blur-md transition hover:bg-white/10 hover:text-white"
+      <div className="mb-4 flex flex-col justify-between lg:flex-row lg:items-end">
+        <Header>{title}</Header>
+        <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
+          <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
+            <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-gray-100 sm:text-sm">
+              <BarsArrowDownIcon className="h-6 w-6" />
+            </span>
+            <select
+              id="sortBy"
+              name="sortBy"
+              className="rounded-r-only"
+              value={preparedFilters.sortBy || SortOptions.PopularityDesc}
+              onChange={(e) => updateQueryParams('sortBy', e.target.value)}
             >
-              <FunnelIcon className="h-4 w-4 text-white/40" />
-              {intl.formatMessage(messages.activefilters, {
-                count: countActiveFilters(preparedFilters),
-              })}
-              {countActiveFilters(preparedFilters) > 0 && (
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-indigo-500 text-[10px] font-bold text-white">
-                  {countActiveFilters(preparedFilters)}
-                </span>
-              )}
-            </button>
+              <option value={SortOptions.PopularityDesc}>
+                {intl.formatMessage(messages.sortPopularityDesc)}
+              </option>
+              <option value={SortOptions.PopularityAsc}>
+                {intl.formatMessage(messages.sortPopularityAsc)}
+              </option>
+              <option value={SortOptions.FirstAirDateDesc}>
+                {intl.formatMessage(messages.sortFirstAirDateDesc)}
+              </option>
+              <option value={SortOptions.FirstAirDateAsc}>
+                {intl.formatMessage(messages.sortFirstAirDateAsc)}
+              </option>
+              <option value={SortOptions.TmdbRatingDesc}>
+                {intl.formatMessage(messages.sortTmdbRatingDesc)}
+              </option>
+              <option value={SortOptions.TmdbRatingAsc}>
+                {intl.formatMessage(messages.sortTmdbRatingAsc)}
+              </option>
+              <option value={SortOptions.TitleAsc}>
+                {intl.formatMessage(messages.sortTitleAsc)}
+              </option>
+              <option value={SortOptions.TitleDesc}>
+                {intl.formatMessage(messages.sortTitleDesc)}
+              </option>
+            </select>
           </div>
-        </div>
-      ) : (
-        <div className="mb-4 flex flex-col justify-between lg:flex-row lg:items-end">
-          <Header>{title}</Header>
-          <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
-            <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
-              <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-gray-100 sm:text-sm">
-                <BarsArrowDownIcon className="h-6 w-6" />
+          <FilterSlideover
+            type="tv"
+            currentFilters={preparedFilters}
+            onClose={() => setShowFilters(false)}
+            show={showFilters}
+          />
+          <div className="mb-2 flex flex-grow sm:mb-0 lg:flex-grow-0">
+            <Button onClick={() => setShowFilters(true)} className="w-full">
+              <FunnelIcon />
+              <span>
+                {intl.formatMessage(messages.activefilters, {
+                  count: countActiveFilters(preparedFilters),
+                })}
               </span>
-              <select
-                id="sortBy"
-                name="sortBy"
-                className="rounded-r-only"
-                value={preparedFilters.sortBy || SortOptions.PopularityDesc}
-                onChange={(e) => updateQueryParams('sortBy', e.target.value)}
-              >
-                <option value={SortOptions.PopularityDesc}>{intl.formatMessage(messages.sortPopularityDesc)}</option>
-                <option value={SortOptions.PopularityAsc}>{intl.formatMessage(messages.sortPopularityAsc)}</option>
-                <option value={SortOptions.FirstAirDateDesc}>{intl.formatMessage(messages.sortFirstAirDateDesc)}</option>
-                <option value={SortOptions.FirstAirDateAsc}>{intl.formatMessage(messages.sortFirstAirDateAsc)}</option>
-                <option value={SortOptions.TmdbRatingDesc}>{intl.formatMessage(messages.sortTmdbRatingDesc)}</option>
-                <option value={SortOptions.TmdbRatingAsc}>{intl.formatMessage(messages.sortTmdbRatingAsc)}</option>
-                <option value={SortOptions.TitleAsc}>{intl.formatMessage(messages.sortTitleAsc)}</option>
-                <option value={SortOptions.TitleDesc}>{intl.formatMessage(messages.sortTitleDesc)}</option>
-              </select>
-            </div>
-            <div className="mb-2 flex flex-grow sm:mb-0 lg:flex-grow-0">
-              <Button onClick={() => setShowFilters(true)} className="w-full">
-                <FunnelIcon />
-                <span>
-                  {intl.formatMessage(messages.activefilters, {
-                    count: countActiveFilters(preparedFilters),
-                  })}
-                </span>
-              </Button>
-            </div>
+            </Button>
           </div>
         </div>
-      )}
+      </div>
       <ListView
         items={titles}
         isEmpty={isEmpty}
