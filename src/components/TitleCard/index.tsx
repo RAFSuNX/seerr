@@ -8,6 +8,7 @@ import RequestModal from '@app/components/RequestModal';
 import ErrorCard from '@app/components/TitleCard/ErrorCard';
 import Placeholder from '@app/components/TitleCard/Placeholder';
 import { useIsTouch } from '@app/hooks/useIsTouch';
+import useTheme from '@app/hooks/useTheme';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import defineMessages from '@app/utils/defineMessages';
@@ -18,8 +19,8 @@ import {
   EyeIcon,
   EyeSlashIcon,
   MinusCircleIcon,
-  StarIcon,
 } from '@heroicons/react/24/outline';
+import { StarIcon } from '@heroicons/react/24/solid';
 import { MediaStatus } from '@server/constants/media';
 import type { Watchlist } from '@server/entity/Watchlist';
 import type { MediaType } from '@server/models/Search';
@@ -61,6 +62,7 @@ const TitleCard = ({
   summary,
   year,
   title,
+  userScore,
   status,
   mediaType,
   isAddedToWatchlist = false,
@@ -70,6 +72,8 @@ const TitleCard = ({
 }: TitleCardProps) => {
   const isTouch = useIsTouch();
   const intl = useIntl();
+  const { theme } = useTheme();
+  const isAmoled = theme === 'amoled-strix';
   const { user, hasPermission } = useUser();
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(status);
@@ -303,10 +307,16 @@ const TitleCard = ({
         isUpdating={isUpdating}
       />
       <div
-        className={`relative transform-gpu cursor-default overflow-hidden rounded-xl bg-gray-800 bg-cover outline-none ring-1 transition duration-300 ${
+        className={`relative transform-gpu cursor-default overflow-hidden bg-gray-800 bg-cover outline-none ring-1 transition duration-300 ${
+          isAmoled ? 'rounded-2xl' : 'rounded-xl'
+        } ${
           showDetail
-            ? 'scale-105 shadow-lg ring-gray-500'
-            : 'scale-100 shadow ring-gray-700'
+            ? isAmoled
+              ? 'scale-105 shadow-2xl shadow-indigo-950/60 ring-indigo-500/50'
+              : 'scale-105 shadow-lg ring-gray-500'
+            : isAmoled
+              ? 'scale-100 shadow ring-white/[0.06]'
+              : 'scale-100 shadow ring-gray-700'
         }`}
         style={{
           paddingBottom: '150%',
@@ -340,21 +350,52 @@ const TitleCard = ({
             fill
           />
           <div className="absolute left-0 right-0 flex items-center justify-between p-2">
-            <div
-              className={`pointer-events-none z-40 self-start rounded-full border shadow-md ${
-                mediaType === 'movie' || mediaType === 'collection'
-                  ? 'border-blue-500 bg-blue-600/80'
-                  : 'border-purple-600 bg-purple-600/80'
-              }`}
-            >
-              <div className="flex h-4 items-center px-2 py-2 text-center text-xs font-medium uppercase tracking-wider text-white sm:h-5">
-                {mediaType === 'movie'
-                  ? intl.formatMessage(globalMessages.movie)
-                  : mediaType === 'collection'
-                    ? intl.formatMessage(globalMessages.collection)
-                    : intl.formatMessage(globalMessages.tvshow)}
+            {isAmoled ? (
+              <div className="pointer-events-none z-40 flex items-center gap-1 self-start rounded-full bg-black/40 px-2 py-1 backdrop-blur-md ring-1 ring-white/10">
+                <span
+                  className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${
+                    mediaType === 'movie' || mediaType === 'collection'
+                      ? 'bg-blue-400'
+                      : 'bg-violet-400'
+                  }`}
+                  style={{
+                    boxShadow:
+                      mediaType === 'movie' || mediaType === 'collection'
+                        ? '0 0 5px rgba(96,165,250,0.9)'
+                        : '0 0 5px rgba(167,139,250,0.9)',
+                  }}
+                />
+                <span
+                  className={`text-[10px] font-semibold uppercase tracking-[0.12em] ${
+                    mediaType === 'movie' || mediaType === 'collection'
+                      ? 'text-blue-300'
+                      : 'text-violet-300'
+                  }`}
+                >
+                  {mediaType === 'movie'
+                    ? intl.formatMessage(globalMessages.movie)
+                    : mediaType === 'collection'
+                      ? intl.formatMessage(globalMessages.collection)
+                      : intl.formatMessage(globalMessages.tvshow)}
+                </span>
               </div>
-            </div>
+            ) : (
+              <div
+                className={`pointer-events-none z-40 self-start rounded-full border shadow-md ${
+                  mediaType === 'movie' || mediaType === 'collection'
+                    ? 'border-blue-500 bg-blue-600/80'
+                    : 'border-purple-600 bg-purple-600/80'
+                }`}
+              >
+                <div className="flex h-4 items-center px-2 py-2 text-center text-xs font-medium uppercase tracking-wider text-white sm:h-5">
+                  {mediaType === 'movie'
+                    ? intl.formatMessage(globalMessages.movie)
+                    : mediaType === 'collection'
+                      ? intl.formatMessage(globalMessages.collection)
+                      : intl.formatMessage(globalMessages.tvshow)}
+                </div>
+              </div>
+            )}
             {showDetail && currentStatus !== MediaStatus.BLOCKLISTED && (
               <div className="flex flex-col gap-1">
                 {user?.userType !== UserType.PLEX &&
@@ -458,54 +499,92 @@ const TitleCard = ({
                 }
                 className="absolute inset-0 h-full w-full cursor-pointer overflow-hidden text-left"
                 style={{
-                  background:
-                    'linear-gradient(180deg, rgba(45, 55, 72, 0.4) 0%, rgba(45, 55, 72, 0.9) 100%)',
+                  background: isAmoled
+                    ? 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.96) 100%)'
+                    : 'linear-gradient(180deg, rgba(45, 55, 72, 0.4) 0%, rgba(45, 55, 72, 0.9) 100%)',
                 }}
               >
                 <div className="flex h-full w-full items-end">
                   <div
-                    className={`px-2 text-white ${
+                    className={`px-2.5 text-white ${
                       !showRequestButton ||
                       (currentStatus &&
                         currentStatus !== MediaStatus.UNKNOWN &&
                         currentStatus !== MediaStatus.DELETED)
-                        ? 'pb-2'
-                        : 'pb-11'
+                        ? 'pb-2.5'
+                        : isAmoled
+                          ? 'pb-12'
+                          : 'pb-11'
                     }`}
                   >
-                    {year && <div className="text-sm font-medium">{year}</div>}
-
-                    <h1
-                      className="whitespace-normal text-xl font-bold leading-tight"
-                      style={{
-                        WebkitLineClamp: 3,
-                        display: '-webkit-box',
-                        overflow: 'hidden',
-                        WebkitBoxOrient: 'vertical',
-                        wordBreak: 'break-word',
-                      }}
-                      data-testid="title-card-title"
-                    >
-                      {title}
-                    </h1>
-                    <div
-                      className="whitespace-normal text-xs"
-                      style={{
-                        WebkitLineClamp:
-                          !showRequestButton ||
-                          (currentStatus &&
-                            currentStatus !== MediaStatus.UNKNOWN &&
-                            currentStatus !== MediaStatus.DELETED)
-                            ? 5
-                            : 3,
-                        display: '-webkit-box',
-                        overflow: 'hidden',
-                        WebkitBoxOrient: 'vertical',
-                        wordBreak: 'break-word',
-                      }}
-                    >
-                      {summary}
-                    </div>
+                    {isAmoled ? (
+                      <>
+                        <h1
+                          className="mb-1 whitespace-normal text-sm font-bold leading-tight text-white"
+                          style={{
+                            WebkitLineClamp: 2,
+                            display: '-webkit-box',
+                            overflow: 'hidden',
+                            WebkitBoxOrient: 'vertical',
+                            wordBreak: 'break-word',
+                          }}
+                          data-testid="title-card-title"
+                        >
+                          {title}
+                        </h1>
+                        <div className="flex items-center gap-1.5">
+                          {year && (
+                            <span className="text-[11px] font-medium text-white/50">{year}</span>
+                          )}
+                          {year && userScore != null && userScore > 0 && (
+                            <span className="text-white/25">·</span>
+                          )}
+                          {userScore != null && userScore > 0 && (
+                            <span className="flex items-center gap-0.5">
+                              <StarIcon className="h-2.5 w-2.5 text-yellow-400/80" />
+                              <span className="text-[11px] font-semibold text-yellow-400/80">
+                                {userScore.toFixed(1)}
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {year && <div className="text-sm font-medium">{year}</div>}
+                        <h1
+                          className="whitespace-normal text-xl font-bold leading-tight"
+                          style={{
+                            WebkitLineClamp: 3,
+                            display: '-webkit-box',
+                            overflow: 'hidden',
+                            WebkitBoxOrient: 'vertical',
+                            wordBreak: 'break-word',
+                          }}
+                          data-testid="title-card-title"
+                        >
+                          {title}
+                        </h1>
+                        <div
+                          className="whitespace-normal text-xs"
+                          style={{
+                            WebkitLineClamp:
+                              !showRequestButton ||
+                              (currentStatus &&
+                                currentStatus !== MediaStatus.UNKNOWN &&
+                                currentStatus !== MediaStatus.DELETED)
+                                ? 5
+                                : 3,
+                            display: '-webkit-box',
+                            overflow: 'hidden',
+                            WebkitBoxOrient: 'vertical',
+                            wordBreak: 'break-word',
+                          }}
+                        >
+                          {summary}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </Link>
@@ -514,7 +593,19 @@ const TitleCard = ({
                 {showRequestButton &&
                   (!currentStatus ||
                     currentStatus === MediaStatus.UNKNOWN ||
-                    currentStatus === MediaStatus.DELETED) && (
+                    currentStatus === MediaStatus.DELETED) &&
+                  (isAmoled ? (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowRequestModal(true);
+                      }}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-indigo-600/70 py-1.5 text-xs font-semibold text-white backdrop-blur-sm ring-1 ring-indigo-500/40 transition hover:bg-indigo-500/80"
+                    >
+                      <ArrowDownTrayIcon className="h-3.5 w-3.5" />
+                      {intl.formatMessage(globalMessages.request)}
+                    </button>
+                  ) : (
                     <Button
                       buttonType="primary"
                       buttonSize="sm"
@@ -527,7 +618,7 @@ const TitleCard = ({
                       <ArrowDownTrayIcon />
                       <span>{intl.formatMessage(globalMessages.request)}</span>
                     </Button>
-                  )}
+                  ))}
               </div>
             </div>
           </Transition>
