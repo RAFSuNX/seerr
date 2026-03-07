@@ -473,7 +473,7 @@ const TitleCard = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="absolute inset-0 z-40 flex items-center justify-center rounded-xl bg-gray-800/75 text-white">
+            <div className={`absolute inset-0 z-40 flex items-center justify-center bg-gray-800/75 text-white ${isAmoled ? 'rounded-lg' : 'rounded-xl'}`}>
               <Spinner className="h-10 w-10" />
             </div>
           </Transition>
@@ -488,7 +488,7 @@ const TitleCard = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="absolute inset-0 overflow-hidden rounded-xl">
+            <div className={`absolute inset-0 overflow-hidden ${isAmoled ? 'rounded-lg' : 'rounded-xl'}`}>
               <Link
                 href={
                   mediaType === 'movie'
