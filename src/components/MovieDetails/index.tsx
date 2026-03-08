@@ -1206,7 +1206,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
 
           {/* Poster + title + actions */}
           <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-3 px-4 pb-6 sm:flex-row sm:items-end sm:gap-5 sm:pb-8 sm:px-6 lg:px-8">
-            <div className="w-1/2 flex-shrink-0 overflow-hidden rounded-xl ring-1 ring-white/15 shadow-2xl sm:w-32 lg:w-36">
+            <div className="w-2/5 flex-shrink-0 overflow-hidden rounded-xl ring-1 ring-white/15 shadow-2xl sm:w-32 lg:w-36">
               <CachedImage
                 type="tmdb"
                 src={
