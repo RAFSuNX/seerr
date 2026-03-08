@@ -1183,7 +1183,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
         />
 
         {/* Hero — cinematic full-bleed */}
-        <div className="relative -mx-4 -mt-16 h-[82vh] min-h-[520px] overflow-hidden">
+        <div className="relative -mx-4 -mt-16 h-[600px] sm:h-[82vh] min-h-[520px] overflow-hidden">
           <CachedImage
             type="tmdb"
             alt=""
