@@ -108,7 +108,7 @@ const DiscoverMovies = () => {
       <div className={isAmoled ? 'relative z-10' : undefined}>
       <div className="mb-4 flex flex-col justify-between lg:flex-row lg:items-end">
         {isAmoled ? (
-          <h1 className="mt-5 text-4xl font-bold tracking-tight text-indigo-300">{title}</h1>
+          <h1 className="mt-5 text-4xl font-bold tracking-tight text-blue-300">{title}</h1>
         ) : (
           <Header>{title}</Header>
         )}
