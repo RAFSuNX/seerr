@@ -1364,12 +1364,17 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               </div>
               {/* Overview — mobile only, shown in hero */}
               <div className="sm:hidden mt-4">
-                {data.tagline && (
-                  <p className="text-indigo-400/80 text-xs font-medium italic mb-1">{data.tagline}</p>
-                )}
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">
-                  {intl.formatMessage(messages.overview)}
-                </p>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
+                    {intl.formatMessage(messages.overview)}
+                  </p>
+                  {data.tagline && (
+                    <>
+                      <span className="text-white/20">|</span>
+                      <p className="text-indigo-400/80 text-xs font-medium italic truncate">{data.tagline}</p>
+                    </>
+                  )}
+                </div>
                 <p className="text-xs leading-relaxed text-white/60 line-clamp-4">
                   {data.overview || intl.formatMessage(messages.overviewunavailable)}
                 </p>
