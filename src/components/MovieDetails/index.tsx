@@ -1409,34 +1409,45 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               {data.overview || intl.formatMessage(messages.overviewunavailable)}
             </p>
             {sortedCrew.length > 0 && (
-              <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3 border-t border-white/[0.06] pt-5">
-                {sortedCrew.slice(0, 6).map((person) => (
-                  <div key={`crew-${person.job}-${person.id}`}>
-                    <div className="text-xs text-white/40 mb-0.5">{person.job}</div>
-                    <Link href={`/person/${person.id}`} className="text-sm text-white hover:text-indigo-300 transition-colors">
-                      {person.name}
-                    </Link>
-                  </div>
-                ))}
+              <div className="mt-6 border-t border-white/[0.06] pt-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30">Crew</h3>
+                  <Link
+                    href={`/movie/${data.id}/crew`}
+                    className="flex items-center gap-1 text-xs text-indigo-400/70 hover:text-indigo-300 transition-colors"
+                  >
+                    {intl.formatMessage(messages.viewfullcrew)}
+                    <ArrowRightCircleIcon className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
+                  {sortedCrew.slice(0, 6).map((person) => (
+                    <div key={`crew-${person.job}-${person.id}`}>
+                      <div className="text-[11px] text-white/35 mb-0.5 uppercase tracking-wide">{person.job}</div>
+                      <Link href={`/person/${person.id}`} className="text-sm text-white/80 hover:text-indigo-300 transition-colors">
+                        {person.name}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
-            <div className="flex items-center justify-between mt-5">
-              {sortedCrew.length > 0 && (
-                <Link href={`/movie/${data.id}/crew`} className="flex items-center gap-1 text-xs text-white/40 hover:text-white/70 transition-colors">
-                  {intl.formatMessage(messages.viewfullcrew)}
-                  <ArrowRightCircleIcon className="h-4 w-4" />
-                </Link>
-              )}
-              {data.keywords.length > 0 && (
+            {data.keywords.length > 0 && (
+              <div className="mt-5">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-2.5">Keywords</h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {data.keywords.slice(0, 5).map((keyword) => (
-                    <Link href={`/discover/movies?keywords=${keyword.id}`} key={`keyword-id-${keyword.id}`} className="inline-flex">
-                      <Tag>{keyword.name}</Tag>
+                  {data.keywords.slice(0, 8).map((keyword) => (
+                    <Link
+                      href={`/discover/movies?keywords=${keyword.id}`}
+                      key={`keyword-id-${keyword.id}`}
+                      className="rounded-full px-2.5 py-0.5 text-xs text-white/50 ring-1 ring-white/10 hover:text-white/80 hover:ring-white/25 transition-colors"
+                    >
+                      {keyword.name}
                     </Link>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Ratings + Facts */}
