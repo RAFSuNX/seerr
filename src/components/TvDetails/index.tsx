@@ -1641,7 +1641,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
                   </>
                 )}
               </div>
-              <p className="text-xs leading-relaxed text-white/60 line-clamp-4">
+              <p className="text-xs leading-relaxed text-white/60">
                 {data.overview || intl.formatMessage(messages.overviewunavailable)}
               </p>
             </div>
