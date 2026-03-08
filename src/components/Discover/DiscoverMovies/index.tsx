@@ -79,7 +79,7 @@ const DiscoverMovies = () => {
     <>
       <PageTitle title={title} />
       {isAmoled && backdropMovie?.backdropPath && (
-        <div className="pointer-events-none absolute -inset-x-4 -mt-16 h-[52vh] overflow-hidden">
+        <div className="pointer-events-none fixed inset-x-0 top-0 h-[52vh] overflow-hidden" style={{ zIndex: 0 }}>
           <img
             src={`https://image.tmdb.org/t/p/w1280${backdropMovie.backdropPath}`}
             alt=""
