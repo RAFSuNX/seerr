@@ -1203,6 +1203,8 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               background: 'rgba(0,0,0,0.55)',
             }}
           />
+          {/* Desktop top vignette */}
+          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/70 to-transparent hidden sm:block" />
           <div
             className="absolute inset-x-0 bottom-0"
             style={{
