@@ -17,7 +17,7 @@ import { BarsArrowDownIcon, FunnelIcon } from '@heroicons/react/24/solid';
 import type { SortOptions as TMDBSortOptions } from '@server/api/themoviedb';
 import type { TvResult } from '@server/models/Search';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const messages = defineMessages('components.Discover.DiscoverTv', {
@@ -53,6 +53,17 @@ const DiscoverTv = () => {
   const updateQueryParams = useUpdateQueryParams({});
   const { theme } = useTheme();
   const isAmoled = theme === 'amoled-strix';
+  const [backdropPath, setBackdropPath] = useState<string | null>(null);
+  const pickedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isAmoled || pickedRef.current || !titles?.length) return;
+    const withBackdrop = titles.filter((t) => (t as TvResult).backdropPath);
+    if (!withBackdrop.length) return;
+    const pick = withBackdrop[Math.floor(Math.random() * withBackdrop.length)] as TvResult;
+    setBackdropPath(pick.backdropPath ?? null);
+    pickedRef.current = true;
+  }, [titles, isAmoled]);
 
   const {
     isLoadingInitialData,
@@ -71,15 +82,14 @@ const DiscoverTv = () => {
   }
 
   const title = intl.formatMessage(messages.discovertv);
-  const backdropShow = titles?.find((t) => (t as TvResult).backdropPath) as TvResult | undefined;
 
   return (
     <>
       <PageTitle title={title} />
-      {isAmoled && backdropShow?.backdropPath && (
+      {isAmoled && backdropPath && (
         <div className="pointer-events-none fixed inset-x-0 top-0 h-[52vh] overflow-hidden" style={{ zIndex: 0 }}>
           <img
-            src={`https://image.tmdb.org/t/p/w1280${backdropShow.backdropPath}`}
+            src={`https://image.tmdb.org/t/p/w1280${backdropPath}`}
             alt=""
             className="h-full w-full object-cover object-top"
             style={{ filter: 'blur(3px)', transform: 'scale(1.04)' }}

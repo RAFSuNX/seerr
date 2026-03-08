@@ -17,7 +17,7 @@ import { BarsArrowDownIcon, FunnelIcon } from '@heroicons/react/24/solid';
 import type { SortOptions as TMDBSortOptions } from '@server/api/themoviedb';
 import type { MovieResult } from '@server/models/Search';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const messages = defineMessages('components.Discover.DiscoverMovies', {
@@ -67,21 +67,31 @@ const DiscoverMovies = () => {
   const [showFilters, setShowFilters] = useState(false);
   const { theme } = useTheme();
   const isAmoled = theme === 'amoled-strix';
+  const [backdropPath, setBackdropPath] = useState<string | null>(null);
+  const pickedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isAmoled || pickedRef.current || !titles?.length) return;
+    const withBackdrop = titles.filter((t) => (t as MovieResult).backdropPath);
+    if (!withBackdrop.length) return;
+    const pick = withBackdrop[Math.floor(Math.random() * withBackdrop.length)] as MovieResult;
+    setBackdropPath(pick.backdropPath ?? null);
+    pickedRef.current = true;
+  }, [titles, isAmoled]);
 
   if (error) {
     return <Error statusCode={500} />;
   }
 
   const title = intl.formatMessage(messages.discovermovies);
-  const backdropMovie = titles?.find((t) => (t as MovieResult).backdropPath) as MovieResult | undefined;
 
   return (
     <>
       <PageTitle title={title} />
-      {isAmoled && backdropMovie?.backdropPath && (
+      {isAmoled && backdropPath && (
         <div className="pointer-events-none fixed inset-x-0 top-0 h-[52vh] overflow-hidden" style={{ zIndex: 0 }}>
           <img
-            src={`https://image.tmdb.org/t/p/w1280${backdropMovie.backdropPath}`}
+            src={`https://image.tmdb.org/t/p/w1280${backdropPath}`}
             alt=""
             className="h-full w-full object-cover object-top"
             style={{ filter: 'blur(3px)', transform: 'scale(1.04)' }}
