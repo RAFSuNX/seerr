@@ -9,6 +9,7 @@ import {
 } from '@app/components/Discover/constants';
 import FilterSlideover from '@app/components/Discover/FilterSlideover';
 import useDiscover from '@app/hooks/useDiscover';
+import useTheme from '@app/hooks/useTheme';
 import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import Error from '@app/pages/_error';
 import defineMessages from '@app/utils/defineMessages';
@@ -50,6 +51,8 @@ const DiscoverTv = () => {
   const [showFilters, setShowFilters] = useState(false);
   const preparedFilters = prepareFilterValues(router.query);
   const updateQueryParams = useUpdateQueryParams({});
+  const { theme } = useTheme();
+  const isAmoled = theme === 'amoled-strix';
 
   const {
     isLoadingInitialData,
@@ -68,10 +71,28 @@ const DiscoverTv = () => {
   }
 
   const title = intl.formatMessage(messages.discovertv);
+  const backdropShow = titles?.find((t) => (t as TvResult).backdropPath) as TvResult | undefined;
 
   return (
     <>
       <PageTitle title={title} />
+      {isAmoled && backdropShow?.backdropPath && (
+        <div className="pointer-events-none absolute -inset-x-4 -mt-16 h-[52vh] overflow-hidden">
+          <img
+            src={`https://image.tmdb.org/t/p/w1280${backdropShow.backdropPath}`}
+            alt=""
+            className="h-full w-full object-cover object-top"
+            style={{ filter: 'blur(3px)', transform: 'scale(1.04)' }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.92) 70%, #000 100%)',
+            }}
+          />
+        </div>
+      )}
+      <div className={isAmoled ? 'relative z-10' : undefined}>
       <div className="mb-4 flex flex-col justify-between lg:flex-row lg:items-end">
         <Header>{title}</Header>
         <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
@@ -139,6 +160,7 @@ const DiscoverTv = () => {
         }
         onScrollBottom={fetchMore}
       />
+      </div>
     </>
   );
 };
