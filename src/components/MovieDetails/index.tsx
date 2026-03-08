@@ -1184,16 +1184,23 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
 
         {/* Hero — cinematic full-bleed */}
         <div className="relative -mx-4 -mt-16 h-[82vh] min-h-[520px] overflow-hidden">
-          {data.backdropPath && (
-            <CachedImage
-              type="tmdb"
-              alt=""
-              src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`}
-              fill
-              style={{ objectFit: 'cover', objectPosition: 'center top' }}
-              priority
-            />
-          )}
+          <CachedImage
+            type="tmdb"
+            alt=""
+            src={
+              data.backdropPath
+                ? `https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`
+                : data.posterPath
+                  ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.posterPath}`
+                  : '/images/seerr_poster_not_found.png'
+            }
+            fill
+            style={{
+              objectFit: 'cover',
+              objectPosition: data.backdropPath ? 'center top' : 'center center',
+            }}
+            priority
+          />
           {/* Mobile: blur + black overlay from middle to bottom */}
           <div
             className="absolute inset-0 sm:hidden"
