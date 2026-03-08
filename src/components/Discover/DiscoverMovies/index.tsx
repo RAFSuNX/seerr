@@ -96,6 +96,7 @@ const DiscoverMovies = () => {
             className="h-full w-full object-cover object-top"
             style={{ filter: 'blur(3px)', transform: 'scale(1.04)' }}
           />
+          <div className="absolute inset-0 bg-black/40" />
           <div
             className="absolute inset-0"
             style={{
