@@ -1280,9 +1280,12 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   data?.mediaInfo?.status !== MediaStatus.PENDING &&
                   data?.mediaInfo?.status !== MediaStatus.BLOCKLISTED && (
                     <Tooltip content={intl.formatMessage(globalMessages.addToBlocklist)}>
-                      <Button buttonType={'ghost'} className="z-40" buttonSize={'md'} onClick={() => setShowBlocklistModal(true)}>
-                        <EyeSlashIcon />
-                      </Button>
+                      <button
+                        onClick={() => setShowBlocklistModal(true)}
+                        className="z-40 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 backdrop-blur-md ring-1 ring-white/[0.12] text-white/70 hover:text-white transition"
+                      >
+                        <EyeSlashIcon className="h-5 w-5" />
+                      </button>
                     </Tooltip>
                   )}
                 {data?.mediaInfo?.status !== MediaStatus.BLOCKLISTED &&
@@ -1290,15 +1293,21 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                     <>
                       {toggleWatchlist ? (
                         <Tooltip content={intl.formatMessage(messages.addtowatchlist)}>
-                          <Button buttonType={'ghost'} className="z-40" buttonSize={'md'} onClick={onClickWatchlistBtn}>
-                            {isUpdating ? <Spinner /> : <StarIcon className={'text-amber-300'} />}
-                          </Button>
+                          <button
+                            onClick={onClickWatchlistBtn}
+                            className="z-40 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 backdrop-blur-md ring-1 ring-white/[0.12] text-white/70 hover:text-white transition"
+                          >
+                            {isUpdating ? <Spinner className="h-5 w-5" /> : <StarIcon className="h-5 w-5 text-amber-300" />}
+                          </button>
                         </Tooltip>
                       ) : (
                         <Tooltip content={intl.formatMessage(messages.removefromwatchlist)}>
-                          <Button className="z-40" buttonSize={'md'} onClick={onClickDeleteWatchlistBtn}>
-                            {isUpdating ? <Spinner /> : <MinusCircleIcon />}
-                          </Button>
+                          <button
+                            onClick={onClickDeleteWatchlistBtn}
+                            className="z-40 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 backdrop-blur-md ring-1 ring-white/[0.12] text-white/70 hover:text-white transition"
+                          >
+                            {isUpdating ? <Spinner className="h-5 w-5" /> : <MinusCircleIcon className="h-5 w-5" />}
+                          </button>
                         </Tooltip>
                       )}
                     </>
