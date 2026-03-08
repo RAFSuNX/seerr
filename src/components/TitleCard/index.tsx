@@ -385,39 +385,52 @@ const TitleCard = ({
               </div>
             )}
             {showDetail && currentStatus !== MediaStatus.BLOCKLISTED && (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1.5">
                 {user?.userType !== UserType.PLEX &&
                   (toggleWatchlist ? (
-                    <Button
-                      buttonType={'ghost'}
-                      className="z-40"
-                      buttonSize={'sm'}
-                      onClick={onClickWatchlistBtn}
-                    >
-                      <StarIcon className={'h-3 text-amber-300'} />
-                    </Button>
+                    isAmoled ? (
+                      <button
+                        className="z-40 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur-md ring-1 ring-white/[0.12] transition hover:bg-black/70"
+                        onClick={onClickWatchlistBtn}
+                      >
+                        <StarIcon className="h-3.5 w-3.5 text-amber-300" />
+                      </button>
+                    ) : (
+                      <Button buttonType={'ghost'} className="z-40" buttonSize={'sm'} onClick={onClickWatchlistBtn}>
+                        <StarIcon className={'h-3 text-amber-300'} />
+                      </Button>
+                    )
                   ) : (
-                    <Button
-                      className="z-40"
-                      buttonSize={'sm'}
-                      onClick={onClickDeleteWatchlistBtn}
-                    >
-                      <MinusCircleIcon className={'h-3'} />
-                    </Button>
+                    isAmoled ? (
+                      <button
+                        className="z-40 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur-md ring-1 ring-white/[0.12] transition hover:bg-black/70"
+                        onClick={onClickDeleteWatchlistBtn}
+                      >
+                        <MinusCircleIcon className="h-3.5 w-3.5 text-white/70" />
+                      </button>
+                    ) : (
+                      <Button className="z-40" buttonSize={'sm'} onClick={onClickDeleteWatchlistBtn}>
+                        <MinusCircleIcon className={'h-3'} />
+                      </Button>
+                    )
                   ))}
                 {showHideButton &&
                   currentStatus !== MediaStatus.PROCESSING &&
                   currentStatus !== MediaStatus.AVAILABLE &&
                   currentStatus !== MediaStatus.PARTIALLY_AVAILABLE &&
                   currentStatus !== MediaStatus.PENDING && (
-                    <Button
-                      buttonType={'ghost'}
-                      className="z-40"
-                      buttonSize={'sm'}
-                      onClick={() => setShowBlocklistModal(true)}
-                    >
-                      <EyeSlashIcon className={'h-3'} />
-                    </Button>
+                    isAmoled ? (
+                      <button
+                        className="z-40 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur-md ring-1 ring-white/[0.12] transition hover:bg-black/70"
+                        onClick={() => setShowBlocklistModal(true)}
+                      >
+                        <EyeSlashIcon className="h-3.5 w-3.5 text-white/70" />
+                      </button>
+                    ) : (
+                      <Button buttonType={'ghost'} className="z-40" buttonSize={'sm'} onClick={() => setShowBlocklistModal(true)}>
+                        <EyeSlashIcon className={'h-3'} />
+                      </Button>
+                    )
                   )}
               </div>
             )}
