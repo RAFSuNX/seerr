@@ -106,7 +106,11 @@ const DiscoverMovies = () => {
       )}
       <div className={isAmoled ? 'relative z-10' : undefined}>
       <div className="mb-4 flex flex-col justify-between lg:flex-row lg:items-end">
-        <Header>{title}</Header>
+        {isAmoled ? (
+          <h1 className="text-4xl font-bold tracking-tight text-white">{title}</h1>
+        ) : (
+          <Header>{title}</Header>
+        )}
         <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
           <div className="mb-2 flex flex-grow sm:mb-0 sm:mr-2 lg:flex-grow-0">
             <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-gray-100 sm:text-sm">
