@@ -56,15 +56,6 @@ const DiscoverTv = () => {
   const [backdropPath, setBackdropPath] = useState<string | null>(null);
   const pickedRef = useRef(false);
 
-  useEffect(() => {
-    if (!isAmoled || pickedRef.current || !titles?.length) return;
-    const withBackdrop = titles.filter((t) => (t as TvResult).backdropPath);
-    if (!withBackdrop.length) return;
-    const pick = withBackdrop[Math.floor(Math.random() * withBackdrop.length)] as TvResult;
-    setBackdropPath(pick.backdropPath ?? null);
-    pickedRef.current = true;
-  }, [titles, isAmoled]);
-
   const {
     isLoadingInitialData,
     isEmpty,
@@ -76,6 +67,15 @@ const DiscoverTv = () => {
   } = useDiscover<TvResult, never, FilterOptions>('/api/v1/discover/tv', {
     ...preparedFilters,
   });
+
+  useEffect(() => {
+    if (!isAmoled || pickedRef.current || !titles?.length) return;
+    const withBackdrop = titles.filter((t) => (t as TvResult).backdropPath);
+    if (!withBackdrop.length) return;
+    const pick = withBackdrop[Math.floor(Math.random() * withBackdrop.length)] as TvResult;
+    setBackdropPath(pick.backdropPath ?? null);
+    pickedRef.current = true;
+  }, [titles, isAmoled]);
 
   if (error) {
     return <Error statusCode={500} />;
