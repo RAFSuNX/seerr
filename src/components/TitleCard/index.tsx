@@ -349,13 +349,11 @@ const TitleCard = ({
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             fill
           />
-          {/* AMOLED tab badge — flush with card top edge */}
+          {/* AMOLED circle badge — bottom left */}
           {isAmoled && (
-            <div
-              className={`pointer-events-none absolute left-2.5 top-0 z-40 flex w-7 items-center justify-center rounded-b-md bg-black/50 pb-1.5 pt-1 backdrop-blur-md ring-1 ring-white/[0.08]`}
-            >
+            <div className="pointer-events-none absolute bottom-2.5 left-2.5 z-50 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 backdrop-blur-md ring-1 ring-white/[0.12]">
               <span
-                className={`text-[11px] font-semibold ${
+                className={`text-[10px] font-semibold ${
                   mediaType === 'movie' || mediaType === 'collection'
                     ? 'text-blue-300'
                     : 'text-violet-300'
