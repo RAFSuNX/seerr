@@ -152,32 +152,23 @@ const HeroSlider = () => {
         onCancel={() => setShowRequestModal(false)}
       />
 
-      {/* Sliding backdrop track */}
-      <div
-        className="absolute inset-0 flex h-full"
-        style={{
-          width: `${items.length * 100}%`,
-          transform: `translateX(-${(currentIndex * 100) / items.length}%)`,
-          transition: 'transform 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-        }}
-      >
-        {items.map((item, i) => (
-          <div
-            key={item.id}
-            className="relative h-full"
-            style={{ width: `${100 / items.length}%` }}
-          >
-            <CachedImage
-              type="tmdb"
-              src={`https://image.tmdb.org/t/p/w1280${item.backdropPath}`}
-              alt=""
-              fill
-              style={{ objectFit: 'cover', objectPosition: 'center top' }}
-              priority={i === 0}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Crossfade backdrop stack */}
+      {items.map((item, i) => (
+        <div
+          key={item.id}
+          className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+          style={{ opacity: i === currentIndex ? 1 : 0 }}
+        >
+          <CachedImage
+            type="tmdb"
+            src={`https://image.tmdb.org/t/p/w1280${item.backdropPath}`}
+            alt=""
+            fill
+            style={{ objectFit: 'cover', objectPosition: 'center top' }}
+            priority={i === 0}
+          />
+        </div>
+      ))}
 
       {/* Subtle left vignette for text contrast */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/10 to-transparent" />
