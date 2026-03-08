@@ -1194,17 +1194,17 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               priority
             />
           )}
-          {/* Top blur + black vignette */}
+          {/* Mobile: full blur + black overlay over entire backdrop */}
           <div
-            className="absolute inset-x-0 top-0 h-48"
+            className="absolute inset-0 sm:hidden"
             style={{
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              maskImage: 'linear-gradient(to bottom, black 0%, black 30%, transparent 100%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 30%, transparent 100%)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              background: 'rgba(0,0,0,0.55)',
             }}
           />
-          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/70 to-transparent" />
+          {/* Desktop top vignette */}
+          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/70 to-transparent hidden sm:block" />
           <div
             className="absolute inset-x-0 bottom-0"
             style={{
