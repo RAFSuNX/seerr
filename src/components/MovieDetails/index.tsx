@@ -1372,7 +1372,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   )}
               </div>
               {/* Overview — mobile only, shown in hero */}
-              <div className="sm:hidden mt-4">
+              <div className="sm:hidden mt-8">
                 <div className="flex items-center gap-2 mb-1.5">
                   <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
                     {intl.formatMessage(messages.overview)}
