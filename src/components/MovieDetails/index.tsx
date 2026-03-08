@@ -1363,11 +1363,17 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   )}
               </div>
               {/* Overview — mobile only, shown in hero */}
-              {data.overview && (
-                <p className="sm:hidden mt-4 text-xs leading-relaxed text-white/60 line-clamp-4">
-                  {data.overview}
+              <div className="sm:hidden mt-4">
+                {data.tagline && (
+                  <p className="text-indigo-400/80 text-xs font-medium italic mb-1">{data.tagline}</p>
+                )}
+                <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">
+                  {intl.formatMessage(messages.overview)}
                 </p>
-              )}
+                <p className="text-xs leading-relaxed text-white/60 line-clamp-4">
+                  {data.overview || intl.formatMessage(messages.overviewunavailable)}
+                </p>
+              </div>
             </div>
           </div>
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 animate-bounce opacity-30 pointer-events-none">
@@ -1380,9 +1386,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
           {/* Overview + crew */}
           <div className="py-6">
             {data.tagline && (
-              <p className="text-indigo-400/80 text-sm font-medium italic mb-3">{data.tagline}</p>
+              <p className="hidden sm:block text-indigo-400/80 text-sm font-medium italic mb-3">{data.tagline}</p>
             )}
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">
+            <h2 className="hidden sm:block text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">
               {intl.formatMessage(messages.overview)}
             </h2>
             <p className="hidden sm:block text-white/70 text-sm leading-relaxed">
