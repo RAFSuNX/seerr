@@ -1194,13 +1194,15 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               priority
             />
           )}
-          {/* Mobile: full blur + black overlay over entire backdrop */}
+          {/* Mobile: blur + black overlay from middle to bottom */}
           <div
             className="absolute inset-0 sm:hidden"
             style={{
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
               background: 'rgba(0,0,0,0.55)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, black 50%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 50%)',
             }}
           />
           {/* Desktop top vignette */}
