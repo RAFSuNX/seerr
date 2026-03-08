@@ -1362,6 +1362,12 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                     </Tooltip>
                   )}
               </div>
+              {/* Overview — mobile only, shown in hero */}
+              {data.overview && (
+                <p className="sm:hidden mt-4 text-xs leading-relaxed text-white/60 line-clamp-4">
+                  {data.overview}
+                </p>
+              )}
             </div>
           </div>
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 animate-bounce opacity-30 pointer-events-none">
