@@ -85,8 +85,8 @@ const AmoledNavbar = () => {
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
             boxShadow: expanded
-              ? '0 8px 32px rgba(0,0,0,0.4)'
-              : '0 0 0 1px rgba(255,255,255,0.12)',
+              ? '0 0 0 1px rgba(255,255,255,0.18), 0 8px 32px rgba(0,0,0,0.4)'
+              : '0 0 0 1px rgba(255,255,255,0.18)',
           }}
         >
           <button
