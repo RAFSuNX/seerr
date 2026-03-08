@@ -1360,9 +1360,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
         </div>
 
         {/* Content sections */}
-        <div className="space-y-5 pt-8 pb-8">
+        <div className="divide-y divide-white/[0.06] pt-6 pb-8">
           {/* Overview + crew */}
-          <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-6">
+          <div className="py-6">
             {data.tagline && (
               <p className="text-indigo-400/80 text-sm font-medium italic mb-3">{data.tagline}</p>
             )}
@@ -1404,12 +1404,12 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
           </div>
 
           {/* Ratings + Facts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="py-6 grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
             {(!!data.voteCount ||
               (ratingData?.rt?.criticsRating && typeof ratingData?.rt?.criticsScore === 'number') ||
               (ratingData?.rt?.audienceRating && !!ratingData?.rt?.audienceScore) ||
               ratingData?.imdb?.criticsScore) && (
-              <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-5">
+              <div>
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-4">Ratings</h2>
                 <div className="flex flex-wrap gap-5">
                   {ratingData?.rt?.criticsRating && typeof ratingData?.rt?.criticsScore === 'number' && (
@@ -1447,7 +1447,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 </div>
               </div>
             )}
-            <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-5">
+            <div>
               <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-4">Details</h2>
               <dl className="space-y-2.5">
                 {data.originalTitle && data.originalLanguage !== locale.slice(0, 2) && (
@@ -1554,8 +1554,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
 
           {/* Collection */}
           {data.collection && (
+            <div className="py-6">
             <Link href={`/collection/${data.collection.id}`}>
-              <div className="group relative overflow-hidden rounded-2xl ring-1 ring-white/[0.08] cursor-pointer transition hover:ring-white/20">
+              <div className="group relative overflow-hidden rounded-xl ring-1 ring-white/[0.08] cursor-pointer transition hover:ring-white/20">
                 <div className="absolute inset-0 z-0">
                   <CachedImage
                     type="tmdb"
@@ -1572,11 +1573,12 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 </div>
               </div>
             </Link>
+            </div>
           )}
 
           {/* Streaming providers */}
           {!!streamingProviders.length && (
-            <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-5">
+            <div className="py-6">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-4">
                 {intl.formatMessage(messages.streamingproviders)}
               </h2>
@@ -1600,7 +1602,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
           )}
 
           {/* External links */}
-          <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-5">
+          <div className="py-6">
             <ExternalLinkBlock
               mediaType="movie"
               tmdbId={data.id}
