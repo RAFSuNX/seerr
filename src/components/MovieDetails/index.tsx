@@ -1205,8 +1205,8 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
           />
 
           {/* Poster + title + actions */}
-          <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-4 px-4 pb-8 sm:flex-row sm:items-end sm:gap-5 sm:px-6 lg:px-8">
-            <div className="w-24 flex-shrink-0 overflow-hidden rounded-xl ring-1 ring-white/10 shadow-2xl sm:w-32 lg:w-36">
+          <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-3 px-4 pb-6 sm:flex-row sm:items-end sm:gap-5 sm:pb-8 sm:px-6 lg:px-8">
+            <div className="w-28 flex-shrink-0 overflow-hidden rounded-xl ring-1 ring-white/15 shadow-2xl sm:w-32 lg:w-36">
               <CachedImage
                 type="tmdb"
                 src={
@@ -1251,7 +1251,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                     />
                   )}
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight mb-2">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight mb-1 sm:mb-2">
                 {data.title}
                 {data.releaseDate && (
                   <span className="ml-3 text-2xl sm:text-3xl font-normal text-white/40">
