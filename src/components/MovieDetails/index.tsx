@@ -1385,7 +1385,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">
               {intl.formatMessage(messages.overview)}
             </h2>
-            <p className="text-white/70 text-sm leading-relaxed">
+            <p className="hidden sm:block text-white/70 text-sm leading-relaxed">
               {data.overview || intl.formatMessage(messages.overviewunavailable)}
             </p>
             {sortedCrew.length > 0 && (
