@@ -25,6 +25,7 @@ import StatusBadge from '@app/components/StatusBadge';
 import useDeepLinks from '@app/hooks/useDeepLinks';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
+import useTheme from '@app/hooks/useTheme';
 import { Permission, UserType, useUser } from '@app/hooks/useUser';
 import globalMessages from '@app/i18n/globalMessages';
 import ErrorPage from '@app/pages/_error';
@@ -33,6 +34,7 @@ import defineMessages from '@app/utils/defineMessages';
 import { refreshIntervalHelper } from '@app/utils/refreshIntervalHelper';
 import {
   ArrowRightCircleIcon,
+  ChevronDownIcon,
   CloudIcon,
   CogIcon,
   ExclamationTriangleIcon,
@@ -117,6 +119,8 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   const { user, hasPermission } = useUser();
   const router = useRouter();
   const intl = useIntl();
+  const { theme } = useTheme();
+  const isAmoled = theme === 'amoled-strix';
   const { locale } = useLocale();
   const [showManager, setShowManager] = useState(
     router.query.manage == '1' ? true : false
@@ -430,12 +434,14 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
   });
 
   return (
-    <div
-      className="media-page"
-      style={{
-        height: 493,
-      }}
-    >
+    <>
+      {!isAmoled ? (
+      <div
+        className="media-page"
+        style={{
+          height: 493,
+        }}
+      >
       {data.backdropPath && (
         <div className="media-page-bg-image">
           <CachedImage
@@ -1143,7 +1149,503 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
         hideWhenEmpty
       />
       <div className="extra-bottom-space relative" />
-    </div>
+      </div>
+      ) : (
+      /* ── AMOLED full-bleed layout ── */
+      <div className="relative bg-black">
+        <PageTitle title={data.title} />
+        <IssueModal
+          onCancel={() => setShowIssueModal(false)}
+          show={showIssueModal}
+          mediaType="movie"
+          tmdbId={data.id}
+        />
+        <ManageSlideOver
+          data={data}
+          mediaType="movie"
+          onClose={() => {
+            setShowManager(false);
+            router.push({
+              pathname: router.pathname,
+              query: { movieId: router.query.movieId },
+            });
+          }}
+          revalidate={() => revalidate()}
+          show={showManager}
+        />
+        <BlocklistModal
+          tmdbId={data.id}
+          type="movie"
+          show={showBlocklistModal}
+          onCancel={closeBlocklistModal}
+          onComplete={onClickHideItemBtn}
+          isUpdating={isBlocklistUpdating}
+        />
+
+        {/* Hero — cinematic full-bleed */}
+        <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 h-[82vh] min-h-[520px] overflow-hidden">
+          {data.backdropPath && (
+            <CachedImage
+              type="tmdb"
+              alt=""
+              src={`https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`}
+              fill
+              style={{ objectFit: 'cover', objectPosition: 'center top' }}
+              priority
+            />
+          )}
+          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 to-transparent" />
+          <div
+            className="absolute inset-x-0 bottom-0"
+            style={{
+              height: '65%',
+              background:
+                'linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
+            }}
+          />
+
+          {/* Poster + title + actions */}
+          <div className="absolute bottom-0 left-0 right-0 flex items-end gap-5 px-4 pb-8 sm:px-6 lg:px-8">
+            <div className="hidden sm:block w-32 lg:w-36 flex-shrink-0 overflow-hidden rounded-xl ring-1 ring-white/10 shadow-2xl">
+              <CachedImage
+                type="tmdb"
+                src={
+                  data.posterPath
+                    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.posterPath}`
+                    : '/images/seerr_poster_not_found.png'
+                }
+                alt=""
+                width={600}
+                height={900}
+                style={{ width: '100%', height: 'auto' }}
+                priority
+              />
+            </div>
+            <div className="flex-1 min-w-0 pb-1">
+              <div className="flex flex-wrap gap-2 mb-3">
+                <StatusBadge
+                  status={data.mediaInfo?.status}
+                  downloadItem={data.mediaInfo?.downloadStatus}
+                  title={data.title}
+                  inProgress={(data.mediaInfo?.downloadStatus ?? []).length > 0}
+                  tmdbId={data.mediaInfo?.tmdbId}
+                  mediaType="movie"
+                  plexUrl={plexUrl}
+                  serviceUrl={data.mediaInfo?.serviceUrl}
+                />
+                {settings.currentSettings.movie4kEnabled &&
+                  hasPermission(
+                    [Permission.MANAGE_REQUESTS, Permission.REQUEST_4K, Permission.REQUEST_4K_MOVIE],
+                    { type: 'or' }
+                  ) && (
+                    <StatusBadge
+                      status={data.mediaInfo?.status4k}
+                      downloadItem={data.mediaInfo?.downloadStatus4k}
+                      title={data.title}
+                      is4k
+                      inProgress={(data.mediaInfo?.downloadStatus4k ?? []).length > 0}
+                      tmdbId={data.mediaInfo?.tmdbId}
+                      mediaType="movie"
+                      plexUrl={plexUrl4k}
+                      serviceUrl={data.mediaInfo?.serviceUrl4k}
+                    />
+                  )}
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight mb-2">
+                {data.title}
+                {data.releaseDate && (
+                  <span className="ml-3 text-2xl sm:text-3xl font-normal text-white/40">
+                    ({data.releaseDate.slice(0, 4)})
+                  </span>
+                )}
+              </h1>
+              {movieAttributes.length > 0 && (
+                <div className="flex items-center flex-wrap text-sm text-white/60 mb-5">
+                  {movieAttributes
+                    .map((t, k) => <span key={k}>{t}</span>)
+                    .reduce((prev, curr) => (
+                      <>
+                        {prev}
+                        <span className="mx-2 text-white/20">|</span>
+                        {curr}
+                      </>
+                    ))}
+                </div>
+              )}
+              <div className="flex items-center gap-2 flex-wrap">
+                {showHideButton &&
+                  data?.mediaInfo?.status !== MediaStatus.PROCESSING &&
+                  data?.mediaInfo?.status !== MediaStatus.AVAILABLE &&
+                  data?.mediaInfo?.status !== MediaStatus.PARTIALLY_AVAILABLE &&
+                  data?.mediaInfo?.status !== MediaStatus.PENDING &&
+                  data?.mediaInfo?.status !== MediaStatus.BLOCKLISTED && (
+                    <Tooltip content={intl.formatMessage(globalMessages.addToBlocklist)}>
+                      <Button buttonType={'ghost'} className="z-40" buttonSize={'md'} onClick={() => setShowBlocklistModal(true)}>
+                        <EyeSlashIcon />
+                      </Button>
+                    </Tooltip>
+                  )}
+                {data?.mediaInfo?.status !== MediaStatus.BLOCKLISTED &&
+                  user?.userType !== UserType.PLEX && (
+                    <>
+                      {toggleWatchlist ? (
+                        <Tooltip content={intl.formatMessage(messages.addtowatchlist)}>
+                          <Button buttonType={'ghost'} className="z-40" buttonSize={'md'} onClick={onClickWatchlistBtn}>
+                            {isUpdating ? <Spinner /> : <StarIcon className={'text-amber-300'} />}
+                          </Button>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip content={intl.formatMessage(messages.removefromwatchlist)}>
+                          <Button className="z-40" buttonSize={'md'} onClick={onClickDeleteWatchlistBtn}>
+                            {isUpdating ? <Spinner /> : <MinusCircleIcon />}
+                          </Button>
+                        </Tooltip>
+                      )}
+                    </>
+                  )}
+                <div className="z-20">
+                  <PlayButton links={mediaLinks} />
+                </div>
+                <RequestButton
+                  mediaType="movie"
+                  media={data.mediaInfo}
+                  tmdbId={data.id}
+                  onUpdate={() => revalidate()}
+                />
+                {(data.mediaInfo?.status === MediaStatus.AVAILABLE ||
+                  (settings.currentSettings.movie4kEnabled &&
+                    hasPermission([Permission.REQUEST_4K, Permission.REQUEST_4K_MOVIE], { type: 'or' }) &&
+                    data.mediaInfo?.status4k === MediaStatus.AVAILABLE)) &&
+                  hasPermission([Permission.CREATE_ISSUES, Permission.MANAGE_ISSUES], { type: 'or' }) && (
+                    <Tooltip content={intl.formatMessage(messages.reportissue)}>
+                      <Button buttonType="warning" onClick={() => setShowIssueModal(true)} className="ml-2 first:ml-0">
+                        <ExclamationTriangleIcon />
+                      </Button>
+                    </Tooltip>
+                  )}
+                {hasPermission(Permission.MANAGE_REQUESTS) &&
+                  data.mediaInfo &&
+                  (data.mediaInfo.jellyfinMediaId ||
+                    data.mediaInfo.jellyfinMediaId4k ||
+                    data.mediaInfo.status !== MediaStatus.UNKNOWN ||
+                    data.mediaInfo.status4k !== MediaStatus.UNKNOWN) && (
+                    <Tooltip content={intl.formatMessage(messages.managemovie)}>
+                      <Button buttonType="ghost" onClick={() => setShowManager(true)} className="relative ml-2 first:ml-0">
+                        <CogIcon className="!mr-0" />
+                        {hasPermission([Permission.MANAGE_ISSUES, Permission.VIEW_ISSUES], { type: 'or' }) &&
+                          (data.mediaInfo?.issues.filter((issue) => issue.status === IssueStatus.OPEN) ?? []).length > 0 && (
+                            <>
+                              <div className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-red-600" />
+                              <div className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-red-600" />
+                            </>
+                          )}
+                      </Button>
+                    </Tooltip>
+                  )}
+              </div>
+            </div>
+          </div>
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 animate-bounce opacity-30 pointer-events-none">
+            <ChevronDownIcon className="h-5 w-5 text-white" />
+          </div>
+        </div>
+
+        {/* Content sections */}
+        <div className="space-y-5 pt-8 pb-8">
+          {/* Overview + crew */}
+          <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-6">
+            {data.tagline && (
+              <p className="text-indigo-400/80 text-sm font-medium italic mb-3">{data.tagline}</p>
+            )}
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">
+              {intl.formatMessage(messages.overview)}
+            </h2>
+            <p className="text-white/70 text-sm leading-relaxed">
+              {data.overview || intl.formatMessage(messages.overviewunavailable)}
+            </p>
+            {sortedCrew.length > 0 && (
+              <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3 border-t border-white/[0.06] pt-5">
+                {sortedCrew.slice(0, 6).map((person) => (
+                  <div key={`crew-${person.job}-${person.id}`}>
+                    <div className="text-xs text-white/40 mb-0.5">{person.job}</div>
+                    <Link href={`/person/${person.id}`} className="text-sm text-white hover:text-indigo-300 transition-colors">
+                      {person.name}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center justify-between mt-5">
+              {sortedCrew.length > 0 && (
+                <Link href={`/movie/${data.id}/crew`} className="flex items-center gap-1 text-xs text-white/40 hover:text-white/70 transition-colors">
+                  {intl.formatMessage(messages.viewfullcrew)}
+                  <ArrowRightCircleIcon className="h-4 w-4" />
+                </Link>
+              )}
+              {data.keywords.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {data.keywords.slice(0, 5).map((keyword) => (
+                    <Link href={`/discover/movies?keywords=${keyword.id}`} key={`keyword-id-${keyword.id}`} className="inline-flex">
+                      <Tag>{keyword.name}</Tag>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Ratings + Facts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {(!!data.voteCount ||
+              (ratingData?.rt?.criticsRating && typeof ratingData?.rt?.criticsScore === 'number') ||
+              (ratingData?.rt?.audienceRating && !!ratingData?.rt?.audienceScore) ||
+              ratingData?.imdb?.criticsScore) && (
+              <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-5">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-4">Ratings</h2>
+                <div className="flex flex-wrap gap-5">
+                  {ratingData?.rt?.criticsRating && typeof ratingData?.rt?.criticsScore === 'number' && (
+                    <Tooltip content={intl.formatMessage(messages.rtcriticsscore)}>
+                      <a href={ratingData.rt.url} className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors" target="_blank" rel="noreferrer">
+                        {ratingData.rt.criticsRating === 'Rotten' ? <RTRotten className="w-6" /> : <RTFresh className="w-6" />}
+                        <span>{ratingData.rt.criticsScore}%</span>
+                      </a>
+                    </Tooltip>
+                  )}
+                  {ratingData?.rt?.audienceRating && !!ratingData?.rt?.audienceScore && (
+                    <Tooltip content={intl.formatMessage(messages.rtaudiencescore)}>
+                      <a href={ratingData.rt.url} className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors" target="_blank" rel="noreferrer">
+                        {ratingData.rt.audienceRating === 'Spilled' ? <RTAudRotten className="w-6" /> : <RTAudFresh className="w-6" />}
+                        <span>{ratingData.rt.audienceScore}%</span>
+                      </a>
+                    </Tooltip>
+                  )}
+                  {ratingData?.imdb?.criticsScore && (
+                    <Tooltip content={intl.formatMessage(messages.imdbuserscore, { formattedCount: intl.formatNumber(ratingData.imdb.criticsScoreCount, { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 1 }) })}>
+                      <a href={ratingData.imdb.url} className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors" target="_blank" rel="noreferrer">
+                        <ImdbLogo className="mr-1 w-6" />
+                        <span>{ratingData.imdb.criticsScore}</span>
+                      </a>
+                    </Tooltip>
+                  )}
+                  {!!data.voteCount && (
+                    <Tooltip content={intl.formatMessage(messages.tmdbuserscore)}>
+                      <a href={`https://www.themoviedb.org/movie/${data.id}?language=${locale}`} className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors" target="_blank" rel="noreferrer">
+                        <TmdbLogo className="mr-1 w-6" />
+                        <span>{Math.round(data.voteAverage * 10)}%</span>
+                      </a>
+                    </Tooltip>
+                  )}
+                </div>
+              </div>
+            )}
+            <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-4">Details</h2>
+              <dl className="space-y-2.5">
+                {data.originalTitle && data.originalLanguage !== locale.slice(0, 2) && (
+                  <div className="flex justify-between text-sm">
+                    <dt className="text-white/40">{intl.formatMessage(messages.originaltitle)}</dt>
+                    <dd className="text-white/80 text-right ml-4">{data.originalTitle}</dd>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm">
+                  <dt className="text-white/40">{intl.formatMessage(globalMessages.status)}</dt>
+                  <dd className="text-white/80">{data.status}</dd>
+                </div>
+                {filteredReleases && filteredReleases.length > 0 ? (
+                  <div className="flex justify-between text-sm">
+                    <dt className="text-white/40">{intl.formatMessage(messages.releasedate, { releaseCount: filteredReleases.length })}</dt>
+                    <dd className="text-white/80 text-right">
+                      {filteredReleases.map((r, i) => (
+                        <span className="flex items-center justify-end gap-1.5" key={`release-date-${i}`}>
+                          {r.type === 3 ? (
+                            <Tooltip content={intl.formatMessage(messages.theatricalrelease)}><TicketIcon className="h-4 w-4" /></Tooltip>
+                          ) : r.type === 4 ? (
+                            <Tooltip content={intl.formatMessage(messages.digitalrelease)}><CloudIcon className="h-4 w-4" /></Tooltip>
+                          ) : (
+                            <Tooltip content={intl.formatMessage(messages.physicalrelease)}>
+                              <svg className="h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="m12 2c-5.5242 0-10 4.4758-10 10 0 5.5242 4.4758 10 10 10 5.5242 0 10-4.4758 10-10 0-5.5242-4.4758-10-10-10zm0 18.065c-4.4476 0-8.0645-3.6169-8.0645-8.0645 0-4.4476 3.6169-8.0645 8.0645-8.0645 4.4476 0 8.0645 3.6169 8.0645 8.0645 0 4.4476-3.6169 8.0645-8.0645 8.0645zm0-14.516c-3.5565 0-6.4516 2.8952-6.4516 6.4516h1.2903c0-2.8468 2.3145-5.1613 5.1613-5.1613zm0 2.9032c-1.9597 0-3.5484 1.5887-3.5484 3.5484s1.5887 3.5484 3.5484 3.5484 3.5484-1.5887 3.5484-3.5484-1.5887-3.5484-3.5484-3.5484zm0 4.8387c-0.71371 0-1.2903-0.57661-1.2903-1.2903s0.57661-1.2903 1.2903-1.2903 1.2903 0.57661 1.2903 1.2903-0.57661 1.2903-1.2903 1.2903z" fill="currentColor" />
+                              </svg>
+                            </Tooltip>
+                          )}
+                          <span>{intl.formatDate(r.release_date, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</span>
+                        </span>
+                      ))}
+                    </dd>
+                  </div>
+                ) : (
+                  data.releaseDate && (
+                    <div className="flex justify-between text-sm">
+                      <dt className="text-white/40">{intl.formatMessage(messages.releasedate, { releaseCount: 1 })}</dt>
+                      <dd className="text-white/80">{intl.formatDate(data.releaseDate, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</dd>
+                    </div>
+                  )
+                )}
+                {data.revenue > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <dt className="text-white/40">{intl.formatMessage(messages.revenue)}</dt>
+                    <dd className="text-white/80">{intl.formatNumber(data.revenue, { currency: 'USD', style: 'currency' })}</dd>
+                  </div>
+                )}
+                {data.budget > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <dt className="text-white/40">{intl.formatMessage(messages.budget)}</dt>
+                    <dd className="text-white/80">{intl.formatNumber(data.budget, { currency: 'USD', style: 'currency' })}</dd>
+                  </div>
+                )}
+                {data.originalLanguage && (
+                  <div className="flex justify-between text-sm">
+                    <dt className="text-white/40">{intl.formatMessage(messages.originallanguage)}</dt>
+                    <dd className="text-white/80">
+                      <Link href={`/discover/movies/language/${data.originalLanguage}`} className="hover:text-indigo-300 transition-colors">
+                        {intl.formatDisplayName(data.originalLanguage, { type: 'language', fallback: 'none' }) ??
+                          data.spokenLanguages.find((lng) => lng.iso_639_1 === data.originalLanguage)?.name}
+                      </Link>
+                    </dd>
+                  </div>
+                )}
+                {data.productionCountries.length > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <dt className="text-white/40">{intl.formatMessage(messages.productioncountries, { countryCount: data.productionCountries.length })}</dt>
+                    <dd className="text-white/80 text-right">
+                      {data.productionCountries.map((c) => (
+                        <span className="flex items-center justify-end" key={`prodcountry-${c.iso_3166_1}`}>
+                          {countries.includes(c.iso_3166_1) && <span className={`mr-1.5 text-xs leading-5 flag:${c.iso_3166_1}`} />}
+                          <span>{intl.formatDisplayName(c.iso_3166_1, { type: 'region', fallback: 'none' }) ?? c.name}</span>
+                        </span>
+                      ))}
+                    </dd>
+                  </div>
+                )}
+                {data.productionCompanies.length > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <dt className="text-white/40">{intl.formatMessage(messages.studio, { studioCount: data.productionCompanies.length })}</dt>
+                    <dd className="text-white/80 text-right">
+                      {data.productionCompanies
+                        .slice(0, showAllStudios || showMoreStudios ? data.productionCompanies.length : minStudios)
+                        .map((s) => (
+                          <Link href={`/discover/movies/studio/${s.id}`} key={`studio-${s.id}`} className="block hover:text-indigo-300 transition-colors">
+                            {s.name}
+                          </Link>
+                        ))}
+                      {!showAllStudios && (
+                        <button type="button" onClick={() => setShowMoreStudios(!showMoreStudios)}>
+                          <span className="flex items-center text-white/40 hover:text-white/70">
+                            {intl.formatMessage(!showMoreStudios ? messages.showmore : messages.showless)}
+                            {!showMoreStudios ? <ChevronDoubleDownIcon className="ml-1 h-4 w-4" /> : <ChevronDoubleUpIcon className="ml-1 h-4 w-4" />}
+                          </span>
+                        </button>
+                      )}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          </div>
+
+          {/* Collection */}
+          {data.collection && (
+            <Link href={`/collection/${data.collection.id}`}>
+              <div className="group relative overflow-hidden rounded-2xl ring-1 ring-white/[0.08] cursor-pointer transition hover:ring-white/20">
+                <div className="absolute inset-0 z-0">
+                  <CachedImage
+                    type="tmdb"
+                    src={`https://image.tmdb.org/t/p/w1440_and_h320_multi_faces/${data.collection.backdropPath}`}
+                    alt=""
+                    fill
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <div className="absolute inset-0 bg-black/60 group-hover:bg-black/50 transition" />
+                </div>
+                <div className="relative z-10 flex items-center justify-between p-5 text-white">
+                  <div className="font-semibold">{data.collection.name}</div>
+                  <Button buttonSize="sm">{intl.formatMessage(globalMessages.view)}</Button>
+                </div>
+              </div>
+            </Link>
+          )}
+
+          {/* Streaming providers */}
+          {!!streamingProviders.length && (
+            <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-4">
+                {intl.formatMessage(messages.streamingproviders)}
+              </h2>
+              <div className="flex flex-wrap gap-4">
+                {streamingProviders.map((p) => (
+                  <Tooltip content={p.name} key={`provider-${p.id}`}>
+                    <span className="opacity-60 hover:opacity-100 transition-opacity">
+                      <CachedImage
+                        type="tmdb"
+                        src={'https://image.tmdb.org/t/p/w45/' + p.logoPath}
+                        alt={p.name}
+                        width={40}
+                        height={40}
+                        className="rounded-lg"
+                      />
+                    </span>
+                  </Tooltip>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* External links */}
+          <div className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] p-5">
+            <ExternalLinkBlock
+              mediaType="movie"
+              tmdbId={data.id}
+              tvdbId={data.externalIds.tvdbId}
+              imdbId={data.externalIds.imdbId}
+              rtUrl={ratingData?.rt?.url}
+              mediaUrl={data.mediaInfo?.mediaUrl ?? data.mediaInfo?.mediaUrl4k}
+            />
+          </div>
+        </div>
+
+        {/* Cast */}
+        {data.credits.cast.length > 0 && (
+          <>
+            <div className="slider-header">
+              <Link href="/movie/[movieId]/cast" as={`/movie/${data.id}/cast`} className="slider-title">
+                <span>{intl.formatMessage(messages.cast)}</span>
+                <ArrowRightCircleIcon />
+              </Link>
+            </div>
+            <Slider
+              sliderKey="cast"
+              isLoading={false}
+              isEmpty={false}
+              items={data.credits.cast.slice(0, 20).map((person) => (
+                <PersonCard
+                  key={`cast-item-${person.id}`}
+                  personId={person.id}
+                  name={person.name}
+                  subName={person.character}
+                  profilePath={person.profilePath}
+                />
+              ))}
+            />
+          </>
+        )}
+        <MediaSlider
+          sliderKey="recommendations"
+          title={intl.formatMessage(messages.recommendations)}
+          url={`/api/v1/movie/${router.query.movieId}/recommendations`}
+          linkUrl={`/movie/${data.id}/recommendations`}
+          hideWhenEmpty
+        />
+        <MediaSlider
+          sliderKey="similar"
+          title={intl.formatMessage(messages.similar)}
+          url={`/api/v1/movie/${router.query.movieId}/similar`}
+          linkUrl={`/movie/${data.id}/similar`}
+          hideWhenEmpty
+        />
+        <div className="extra-bottom-space relative" />
+      </div>
+      )}
+    </>
   );
 };
 
