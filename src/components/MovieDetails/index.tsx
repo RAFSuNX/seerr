@@ -1194,7 +1194,17 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               priority
             />
           )}
-          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 to-transparent" />
+          {/* Top blur + black vignette */}
+          <div
+            className="absolute inset-x-0 top-0 h-48"
+            style={{
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              maskImage: 'linear-gradient(to bottom, black 0%, black 30%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 30%, transparent 100%)',
+            }}
+          />
+          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/70 to-transparent" />
           <div
             className="absolute inset-x-0 bottom-0"
             style={{
