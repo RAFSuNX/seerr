@@ -126,7 +126,31 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
+      - name: Configure target registries
+        id: registries
+        shell: bash
+        run: |
+          if [[ "${VERSION}" == *-* ]]; then
+            echo "dockerhub_enabled=false" >> "$GITHUB_OUTPUT"
+            echo "primary_image=ghcr.io/${GITHUB_REPOSITORY}" >> "$GITHUB_OUTPUT"
+            {
+              echo "images<<EOF"
+              echo "ghcr.io/${GITHUB_REPOSITORY}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "dockerhub_enabled=true" >> "$GITHUB_OUTPUT"
+            echo "primary_image=${DOCKER_HUB}" >> "$GITHUB_OUTPUT"
+            {
+              echo "images<<EOF"
+              echo "${DOCKER_HUB}"
+              echo "ghcr.io/${GITHUB_REPOSITORY}"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Log in to Docker Hub
+        if: steps.registries.outputs.dockerhub_enabled == 'true'
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -143,9 +167,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
-          images: |
-            ${{ env.DOCKER_HUB }}
-            ghcr.io/${{ github.repository }}
+          images: ${{ steps.registries.outputs.images }}
           tags: |
             type=raw,value=${{ env.VERSION }}
           labels: |
@@ -173,7 +195,7 @@ jobs:
       - name: Resolve manifest digest
         id: digests
         run: |
-          DIGEST=$(docker buildx imagetools inspect "${{ env.DOCKER_HUB }}:${{ env.VERSION }}" --format '{{json .Manifest.Digest}}' | tr -d '"')
+          DIGEST=$(docker buildx imagetools inspect "${{ steps.registries.outputs.primary_image }}:${{ env.VERSION }}" --format '{{json .Manifest.Digest}}' | tr -d '"')
           echo "IMAGE_DIGEST=$DIGEST" >> $GITHUB_OUTPUT
 
       - name: Also tag :latest (non-pre-release only)
@@ -212,6 +234,7 @@ jobs:
         uses: aquasecurity/setup-trivy@3fb12ec12f41e471780db15c232d5dd185dcb514 # v0.2.5
 
       - name: Log in to Docker Hub
+        if: ${{ !contains(env.VERSION, '-') }}
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -227,15 +250,19 @@ jobs:
       - name: Sign images
         run: |
           cosign sign --recursive "ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}"
-          cosign sign --recursive "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
+          if [[ "${VERSION}" != *-* ]]; then
+            cosign sign --recursive "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
+          fi
 
       - name: Generate SBOMs
         run: |
           trivy image --format cyclonedx --output seerr-ghcr-image-${{ env.VERSION }}.sbom \
             "ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}"
 
-          trivy image --format cyclonedx --output seerr-dockerhub-image-${{ env.VERSION }}.sbom \
-            "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
+          if [[ "${VERSION}" != *-* ]]; then
+            trivy image --format cyclonedx --output seerr-dockerhub-image-${{ env.VERSION }}.sbom \
+              "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
+          fi
 
       - name: Attest SBOMs
         run: |
@@ -244,10 +271,12 @@ jobs:
             --predicate seerr-ghcr-image-${{ env.VERSION }}.sbom \
             "ghcr.io/${{ github.repository }}@${{ needs.publish.outputs.image_digest }}"
 
-          cosign attest \
-            --type cyclonedx \
-            --predicate seerr-dockerhub-image-${{ env.VERSION }}.sbom \
-            "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
+          if [[ "${VERSION}" != *-* ]]; then
+            cosign attest \
+              --type cyclonedx \
+              --predicate seerr-dockerhub-image-${{ env.VERSION }}.sbom \
+              "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}"
+          fi
 
       - name: Upload SBOMs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -275,9 +304,11 @@ jobs:
             --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
 
-          cosign verify "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}" \
-            --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
-            --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+          if [[ "${VERSION}" != *-* ]]; then
+            cosign verify "${{ env.DOCKER_HUB }}@${{ needs.publish.outputs.image_digest }}" \
+              --certificate-identity "https://github.com/${{ github.workflow_ref }}" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+          fi
 
       # - name: Verify attestations
       #   run: |
