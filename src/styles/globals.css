@@ -50,6 +50,7 @@
     min-height: calc(100% + env(safe-area-inset-top));
     padding: env(safe-area-inset-top) env(safe-area-inset-right)
       calc(4rem + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   }
