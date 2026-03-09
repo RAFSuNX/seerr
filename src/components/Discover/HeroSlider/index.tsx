@@ -116,7 +116,7 @@ const HeroSlider = () => {
 
   return (
     <div
-      className="relative -mx-4 -mt-16 mb-8 h-[48vw] max-h-[520px] min-h-[320px] overflow-hidden"
+      className="relative -mx-4 -mt-16 mb-14 h-[48vw] max-h-[520px] min-h-[320px] overflow-hidden lg:mb-16"
       onMouseEnter={() => {
         isPaused.current = true;
       }}
