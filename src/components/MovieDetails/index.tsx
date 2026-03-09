@@ -1416,7 +1416,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               {data.overview || intl.formatMessage(messages.overviewunavailable)}
             </p>
             {sortedCrew.length > 0 && (
-              <div className="relative -mt-[50px] pt-3">
+              <div className="relative -mt-[50px] pt-6">
                 <div className="absolute inset-x-0 top-0 border-t border-white/[0.12]" />
                 <div className="relative">
                   <div className="flex items-center justify-between mb-3">
