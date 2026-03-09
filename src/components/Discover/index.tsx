@@ -1,4 +1,6 @@
 import Button from '@app/components/Common/Button';
+import HeroSlider from '@app/components/Discover/HeroSlider';
+import useTheme from '@app/hooks/useTheme';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
 import PageTitle from '@app/components/Common/PageTitle';
@@ -55,6 +57,7 @@ const messages = defineMessages('components.Discover', {
 const Discover = () => {
   const intl = useIntl();
   const { hasPermission } = useUser();
+  const { theme } = useTheme();
   const { addToast } = useToasts();
   const {
     data: discoverData,
@@ -123,6 +126,7 @@ const Discover = () => {
   return (
     <>
       <PageTitle title={intl.formatMessage(messages.discover)} />
+      {theme === 'amoled-strix' && <HeroSlider />}
       {hasPermission(Permission.ADMIN) && (
         <>
           {isEditing && (
