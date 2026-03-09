@@ -22,7 +22,7 @@ const PlayButton = ({ links }: PlayButtonProps) => {
       text={
         <>
           {links[0].svg}
-          <span>{links[0].text}</span>
+          <span className="whitespace-nowrap">{links[0].text}</span>
         </>
       }
       href={links[0].url}
@@ -38,7 +38,7 @@ const PlayButton = ({ links }: PlayButtonProps) => {
               target="_blank"
             >
               {link.svg}
-              <span>{link.text}</span>
+              <span className="whitespace-nowrap">{link.text}</span>
             </ButtonWithDropdown.Item>
           );
         })}
