@@ -1526,7 +1526,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
                   ))}
               </div>
             )}
-            <div className="hide-scrollbar flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 sm:overflow-visible sm:pb-0">
+            <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
               {showHideButton &&
                 data?.mediaInfo?.status !== MediaStatus.PROCESSING &&
                 data?.mediaInfo?.status !== MediaStatus.AVAILABLE &&
