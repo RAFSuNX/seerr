@@ -399,7 +399,7 @@ const RequestButton = ({
           </>
         }
         onClick={buttonOne.action}
-        className="ml-2"
+        className="ml-2 shrink-0 whitespace-nowrap"
       >
         {others && others.length > 0
           ? others.map((button) => (
