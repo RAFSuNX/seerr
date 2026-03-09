@@ -1647,7 +1647,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
             </div>
           </div>
         </div>
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 animate-bounce opacity-30 pointer-events-none">
+        <div className="absolute bottom-[46px] left-1/2 -translate-x-1/2 animate-bounce opacity-30 pointer-events-none">
           <ChevronDownIcon className="h-5 w-5 text-white" />
         </div>
       </div>
