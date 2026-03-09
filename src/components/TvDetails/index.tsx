@@ -1452,7 +1452,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
         />
 
         {/* Poster + title + actions */}
-        <div className="absolute inset-0 flex flex-col justify-center gap-3 px-4 pt-24 sm:inset-auto sm:bottom-0 sm:left-0 sm:right-0 sm:flex-row sm:items-end sm:gap-5 sm:pb-8 sm:pt-0 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 flex flex-col justify-center gap-3 px-4 pt-28 sm:inset-auto sm:bottom-0 sm:left-0 sm:right-0 sm:flex-row sm:items-end sm:gap-5 sm:pb-8 sm:pt-0 sm:px-6 lg:px-8">
           <div className="w-2/5 flex-shrink-0 overflow-hidden rounded-xl ring-1 ring-white/15 shadow-2xl mt-[50px] sm:mt-0 sm:w-32 lg:w-36">
             <CachedImage
               type="tmdb"
