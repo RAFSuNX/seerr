@@ -1673,42 +1673,45 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
             {data.overview || intl.formatMessage(messages.overviewunavailable)}
           </p>
           {sortedCrew.length > 0 && (
-            <div className="-mt-[50px] border-t border-white/[0.06] pt-3">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30">Crew</h3>
-                <Link
-                  href={`/tv/${data.id}/crew`}
-                  className="flex items-center gap-1 text-xs text-violet-400/70 hover:text-violet-300 transition-colors"
-                >
-                  {intl.formatMessage(messages.viewfullcrew)}
-                  <ArrowRightCircleIcon className="h-3.5 w-3.5" />
-                </Link>
+            <>
+              <div className="mt-3 border-t border-white/[0.06]" />
+              <div className="pt-3">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30">Crew</h3>
+                  <Link
+                    href={`/tv/${data.id}/crew`}
+                    className="flex items-center gap-1 text-xs text-violet-400/70 hover:text-violet-300 transition-colors"
+                  >
+                    {intl.formatMessage(messages.viewfullcrew)}
+                    <ArrowRightCircleIcon className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
+                  {(data.createdBy.length > 0
+                    ? [
+                        ...data.createdBy.map(
+                          (person): Partial<Crew> => ({
+                            id: person.id,
+                            job: 'Creator',
+                            name: person.name,
+                          })
+                        ),
+                        ...sortedCrew,
+                      ]
+                    : sortedCrew
+                  )
+                    .slice(0, 6)
+                    .map((person) => (
+                      <div key={`crew-${person.job}-${person.id}`}>
+                        <div className="text-[11px] text-white/35 mb-0.5 uppercase tracking-wide">{person.job}</div>
+                        <Link href={`/person/${person.id}`} className="text-sm text-white/80 hover:text-violet-300 transition-colors">
+                          {person.name}
+                        </Link>
+                      </div>
+                    ))}
+                </div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
-                {(data.createdBy.length > 0
-                  ? [
-                      ...data.createdBy.map(
-                        (person): Partial<Crew> => ({
-                          id: person.id,
-                          job: 'Creator',
-                          name: person.name,
-                        })
-                      ),
-                      ...sortedCrew,
-                    ]
-                  : sortedCrew
-                )
-                  .slice(0, 6)
-                  .map((person) => (
-                    <div key={`crew-${person.job}-${person.id}`}>
-                      <div className="text-[11px] text-white/35 mb-0.5 uppercase tracking-wide">{person.job}</div>
-                      <Link href={`/person/${person.id}`} className="text-sm text-white/80 hover:text-violet-300 transition-colors">
-                        {person.name}
-                      </Link>
-                    </div>
-                  ))}
-              </div>
-            </div>
+            </>
           )}
           {data.keywords.length > 0 && (
             <div className="mt-5">
