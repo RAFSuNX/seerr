@@ -452,7 +452,6 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             fill
             priority
           />
-          <div className="absolute inset-0 bg-black/25" />
           <div
             className="absolute inset-0"
             style={{
@@ -718,9 +717,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   <span>{intl.formatMessage(messages.viewfullcrew)}</span>
                   <ArrowRightCircleIcon className="ml-1.5 inline-block h-5 w-5" />
                 </Link>
-                </div>
               </div>
-            )}
+            </>
+          )}
           {data.keywords.length > 0 && (
             <div className="mt-6">
               {data.keywords.map((keyword) => (
@@ -1185,44 +1184,48 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
 
         {/* Hero — cinematic full-bleed */}
         <div className="relative -mx-4 -mt-16 min-h-[100svh] sm:h-[82vh] sm:min-h-[520px]">
-          <CachedImage
-            type="tmdb"
-            alt=""
-            src={
-              data.backdropPath
-                ? `https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`
-                : data.posterPath
-                  ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.posterPath}`
-                  : '/images/seerr_poster_not_found.png'
-            }
-            fill
-            style={{
-              objectFit: 'cover',
-              objectPosition: data.backdropPath ? 'center top' : 'center center',
-            }}
-            priority
-          />
-          {/* Mobile: blur + black overlay from middle to bottom */}
-          <div
-            className="absolute inset-0 sm:hidden"
-            style={{
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              background: 'rgba(0,0,0,0.55)',
-              maskImage: 'linear-gradient(to bottom, transparent 0%, black 50%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 50%)',
-            }}
-          />
-          {/* Desktop top vignette */}
-          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/70 to-transparent hidden sm:block" />
-          <div
-            className="absolute inset-x-0 bottom-0"
-            style={{
-              height: '65%',
-              background:
-                'linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
-            }}
-          />
+          {/* Background elements clipped to hero bounds */}
+          <div className="absolute inset-0 overflow-hidden">
+            <CachedImage
+              type="tmdb"
+              alt=""
+              src={
+                data.backdropPath
+                  ? `https://image.tmdb.org/t/p/w1920_and_h800_multi_faces/${data.backdropPath}`
+                  : data.posterPath
+                    ? `https://image.tmdb.org/t/p/w600_and_h900_bestv2${data.posterPath}`
+                    : '/images/seerr_poster_not_found.png'
+              }
+              fill
+              style={{
+                objectFit: 'cover',
+                objectPosition: data.backdropPath ? 'center top' : 'center center',
+              }}
+              priority
+            />
+            <div className="absolute inset-0 bg-black/25" />
+            {/* Mobile: blur + black overlay from middle to bottom */}
+            <div
+              className="absolute inset-0 sm:hidden"
+              style={{
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                background: 'rgba(0,0,0,0.55)',
+                maskImage: 'linear-gradient(to bottom, transparent 0%, black 50%)',
+                WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 50%)',
+              }}
+            />
+            {/* Desktop top vignette */}
+            <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/70 to-transparent hidden sm:block" />
+            <div
+              className="absolute inset-x-0 bottom-0"
+              style={{
+                height: '65%',
+                background:
+                  'linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
+              }}
+            />
+          </div>
 
           {/* Poster + title + actions */}
           <div className="absolute inset-0 flex flex-col justify-center gap-3 px-4 pt-28 sm:inset-auto sm:bottom-0 sm:left-0 sm:right-0 sm:flex-row sm:items-end sm:gap-5 sm:pb-8 sm:pt-0 sm:px-6 lg:px-8">
@@ -1421,26 +1424,27 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                 <div className="absolute inset-x-0 top-0 border-t border-white/[0.12]" />
                 <div className="relative">
                   <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30">Crew</h3>
-                  <Link
-                    href={`/movie/${data.id}/crew`}
-                    className="flex items-center gap-1 text-xs text-indigo-400/70 hover:text-indigo-300 transition-colors"
-                  >
-                    {intl.formatMessage(messages.viewfullcrew)}
-                    <ArrowRightCircleIcon className="h-3.5 w-3.5" />
-                  </Link>
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30">Crew</h3>
+                    <Link
+                      href={`/movie/${data.id}/crew`}
+                      className="flex items-center gap-1 text-xs text-indigo-400/70 hover:text-indigo-300 transition-colors"
+                    >
+                      {intl.formatMessage(messages.viewfullcrew)}
+                      <ArrowRightCircleIcon className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
+                    {sortedCrew.slice(0, 6).map((person) => (
+                      <div key={`crew-${person.job}-${person.id}`}>
+                        <div className="text-[11px] text-white/35 mb-0.5 uppercase tracking-wide">{person.job}</div>
+                        <Link href={`/person/${person.id}`} className="text-sm text-white/80 hover:text-indigo-300 transition-colors">
+                          {person.name}
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
-                  {sortedCrew.slice(0, 6).map((person) => (
-                    <div key={`crew-${person.job}-${person.id}`}>
-                      <div className="text-[11px] text-white/35 mb-0.5 uppercase tracking-wide">{person.job}</div>
-                      <Link href={`/person/${person.id}`} className="text-sm text-white/80 hover:text-indigo-300 transition-colors">
-                        {person.name}
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </>
+              </div>
             )}
             {data.keywords.length > 0 && (
               <div className="mt-5">
