@@ -1673,7 +1673,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
             {data.overview || intl.formatMessage(messages.overviewunavailable)}
           </p>
           {sortedCrew.length > 0 && (
-            <div className="-mt-[50px] border-t border-white/[0.06] pt-0">
+            <div className="-mt-[50px] border-t border-white/[0.06] pt-3">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30">Crew</h3>
                 <Link
