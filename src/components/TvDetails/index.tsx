@@ -1411,7 +1411,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
       />
 
       {/* Hero — cinematic full-bleed */}
-      <div className="relative -mx-4 -mt-16 min-h-[600px] sm:h-[82vh] sm:min-h-[520px] overflow-visible sm:overflow-hidden">
+      <div className="relative -mx-4 -mt-16 min-h-[100svh] sm:h-[82vh] sm:min-h-[520px] overflow-visible sm:overflow-hidden">
         <CachedImage
           type="tmdb"
           alt=""
