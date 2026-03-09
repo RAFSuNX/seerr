@@ -452,6 +452,7 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             fill
             priority
           />
+          <div className="absolute inset-0 bg-black/25" />
           <div
             className="absolute inset-0"
             style={{
@@ -1207,19 +1208,19 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
             style={{
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
-              background: 'rgba(0,0,0,0.68)',
+              background: 'rgba(0,0,0,0.55)',
               maskImage: 'linear-gradient(to bottom, transparent 0%, black 50%)',
               WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 50%)',
             }}
           />
           {/* Desktop top vignette */}
-          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/85 to-transparent hidden sm:block" />
+          <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/70 to-transparent hidden sm:block" />
           <div
             className="absolute inset-x-0 bottom-0"
             style={{
               height: '65%',
               background:
-                'linear-gradient(to top, #000 0%, rgba(0,0,0,0.92) 34%, rgba(0,0,0,0.58) 72%, transparent 100%)',
+                'linear-gradient(to top, #000 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
             }}
           />
 
