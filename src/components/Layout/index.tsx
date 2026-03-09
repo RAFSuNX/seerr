@@ -1,3 +1,4 @@
+import AmoledNavbar from '@app/components/Layout/AmoledNavbar';
 import MobileMenu from '@app/components/Layout/MobileMenu';
 import PullToRefresh from '@app/components/Layout/PullToRefresh';
 import SearchInput from '@app/components/Layout/SearchInput';
@@ -5,6 +6,7 @@ import Sidebar from '@app/components/Layout/Sidebar';
 import UserDropdown from '@app/components/Layout/UserDropdown';
 import useLocale from '@app/hooks/useLocale';
 import useSettings from '@app/hooks/useSettings';
+import useTheme from '@app/hooks/useTheme';
 import { useUser } from '@app/hooks/useUser';
 import { ArrowLeftIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/solid';
 import type { AvailableLocale } from '@server/types/languages';
@@ -19,6 +21,8 @@ type LayoutProps = {
 const Layout = ({ children }: LayoutProps) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { theme } = useTheme();
+  const isAmoled = theme === 'amoled-strix';
   const { user } = useUser();
   const router = useRouter();
   const { currentSettings } = useSettings();
@@ -87,44 +91,48 @@ const Layout = ({ children }: LayoutProps) => {
 
       <div className="relative mb-16 flex w-0 min-w-0 flex-1 flex-col lg:ml-64">
         <PullToRefresh />
-        <div
-          className={`searchbar fixed left-0 right-0 top-0 z-10 flex flex-shrink-0 transition duration-300 ${
-            isScrolled ? 'bg-gray-700/80' : 'bg-transparent'
-          } lg:left-64`}
-          style={{
-            backdropFilter: isScrolled ? 'blur(5px)' : undefined,
-            WebkitBackdropFilter: isScrolled ? 'blur(5px)' : undefined,
-          }}
-        >
-          <div className="flex flex-1 items-center justify-between px-4 md:pl-4 md:pr-4">
-            <button
-              className={`mr-2 hidden text-white sm:block ${
-                isScrolled ? 'opacity-90' : 'opacity-70'
-              } transition duration-300 focus:outline-none lg:hidden`}
-              aria-label="Open sidebar"
-              onClick={() => setSidebarOpen(true)}
-              data-testid="sidebar-toggle"
-            >
-              <Bars3BottomLeftIcon className="h-7 w-7" />
-            </button>
-            <button
-              className={`mr-2 text-white ${
-                isScrolled ? 'opacity-90' : 'opacity-70'
-              } pwa-only transition duration-300 hover:text-white focus:text-white focus:outline-none`}
-              onClick={() => router.back()}
-            >
-              <ArrowLeftIcon className="w-7" />
-            </button>
-            <SearchInput />
-            <div className="flex items-center">
-              <UserDropdown />
+        {isAmoled ? (
+          <AmoledNavbar />
+        ) : (
+          <div
+            className={`searchbar fixed left-0 right-0 top-0 z-10 flex flex-shrink-0 transition duration-300 ${
+              isScrolled ? 'bg-gray-700/80' : 'bg-transparent'
+            } lg:left-64`}
+            style={{
+              backdropFilter: isScrolled ? 'blur(5px)' : undefined,
+              WebkitBackdropFilter: isScrolled ? 'blur(5px)' : undefined,
+            }}
+          >
+            <div className="flex flex-1 items-center justify-between px-4 md:pl-4 md:pr-4">
+              <button
+                className={`mr-2 hidden text-white sm:block ${
+                  isScrolled ? 'opacity-90' : 'opacity-70'
+                } transition duration-300 focus:outline-none lg:hidden`}
+                aria-label="Open sidebar"
+                onClick={() => setSidebarOpen(true)}
+                data-testid="sidebar-toggle"
+              >
+                <Bars3BottomLeftIcon className="h-7 w-7" />
+              </button>
+              <button
+                className={`mr-2 text-white ${
+                  isScrolled ? 'opacity-90' : 'opacity-70'
+                } pwa-only transition duration-300 hover:text-white focus:text-white focus:outline-none`}
+                onClick={() => router.back()}
+              >
+                <ArrowLeftIcon className="w-7" />
+              </button>
+              <SearchInput />
+              <div className="flex items-center">
+                <UserDropdown />
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        <main className="relative top-16 z-0 focus:outline-none" tabIndex={0}>
+        <main className={`relative z-0 focus:outline-none ${isAmoled ? 'top-0' : 'top-16'}`} tabIndex={0}>
           <div className="mb-6">
-            <div className="max-w-8xl mx-auto px-4">{children}</div>
+            <div className={`max-w-8xl mx-auto px-4 ${isAmoled ? 'pt-16' : ''}`}>{children}</div>
           </div>
         </main>
       </div>

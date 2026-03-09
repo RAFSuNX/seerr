@@ -1,4 +1,5 @@
 import TitleCard from '@app/components/TitleCard';
+import useTheme from '@app/hooks/useTheme';
 import globalMessages from '@app/i18n/globalMessages';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { debounce } from 'lodash';
@@ -29,6 +30,8 @@ const Slider = ({
   placeholder = <TitleCard.Placeholder />,
 }: SliderProps) => {
   const intl = useIntl();
+  const { theme } = useTheme();
+  const isAmoled = theme === 'amoled-strix';
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollPos, setScrollPos] = useState({ isStart: true, isEnd: false });
 
@@ -149,28 +152,30 @@ const Slider = ({
 
   return (
     <div className="relative" data-testid="media-slider">
-      <div className="absolute right-0 -mt-10 flex text-gray-400">
-        <button
-          className={`${
-            scrollPos.isStart ? 'text-gray-800' : 'hover:text-white'
-          }`}
-          onClick={() => slide(Direction.LEFT)}
-          disabled={scrollPos.isStart}
-          type="button"
-        >
-          <ChevronLeftIcon className="h-6 w-6" />
-        </button>
-        <button
-          className={`${
-            scrollPos.isEnd ? 'text-gray-800' : 'hover:text-white'
-          }`}
-          onClick={() => slide(Direction.RIGHT)}
-          disabled={scrollPos.isEnd}
-          type="button"
-        >
-          <ChevronRightIcon className="h-6 w-6" />
-        </button>
-      </div>
+      {!isAmoled && (
+        <div className="absolute right-0 -mt-10 flex text-gray-400">
+          <button
+            className={`${
+              scrollPos.isStart ? 'text-gray-800' : 'hover:text-white'
+            }`}
+            onClick={() => slide(Direction.LEFT)}
+            disabled={scrollPos.isStart}
+            type="button"
+          >
+            <ChevronLeftIcon className="h-6 w-6" />
+          </button>
+          <button
+            className={`${
+              scrollPos.isEnd ? 'text-gray-800' : 'hover:text-white'
+            }`}
+            onClick={() => slide(Direction.RIGHT)}
+            disabled={scrollPos.isEnd}
+            type="button"
+          >
+            <ChevronRightIcon className="h-6 w-6" />
+          </button>
+        </div>
+      )}
       <div
         className="hide-scrollbar relative -my-2 -ml-4 -mr-4 overflow-y-auto overflow-x-scroll overscroll-x-contain whitespace-nowrap px-2 py-2"
         ref={containerRef}
