@@ -1656,12 +1656,19 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
       <div className="divide-y divide-white/[0.06] pt-6 pb-8">
         {/* Overview + crew + keywords */}
         <div className="py-6">
-          {data.tagline && (
-            <p className="hidden sm:block text-violet-400/80 text-sm font-medium italic mb-3">{data.tagline}</p>
-          )}
-          <h2 className="hidden sm:block text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">
-            {intl.formatMessage(messages.overview)}
-          </h2>
+          <div className="hidden sm:flex items-center gap-2 mb-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40">
+              {intl.formatMessage(messages.overview)}
+            </h2>
+            {data.tagline && (
+              <>
+                <span className="text-white/20">|</span>
+                <p className="text-violet-400/80 text-sm font-medium italic">
+                  {data.tagline}
+                </p>
+              </>
+            )}
+          </div>
           <p className="hidden sm:block text-white/70 text-sm leading-relaxed">
             {data.overview || intl.formatMessage(messages.overviewunavailable)}
           </p>
