@@ -1526,7 +1526,7 @@ const TvDetails = ({ tv }: TvDetailsProps) => {
                   ))}
               </div>
             )}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
               {showHideButton &&
                 data?.mediaInfo?.status !== MediaStatus.PROCESSING &&
                 data?.mediaInfo?.status !== MediaStatus.AVAILABLE &&
