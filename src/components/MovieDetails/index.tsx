@@ -717,9 +717,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
                   <span>{intl.formatMessage(messages.viewfullcrew)}</span>
                   <ArrowRightCircleIcon className="ml-1.5 inline-block h-5 w-5" />
                 </Link>
+                </div>
               </div>
-            </>
-          )}
+            )}
           {data.keywords.length > 0 && (
             <div className="mt-6">
               {data.keywords.map((keyword) => (
@@ -1416,9 +1416,9 @@ const MovieDetails = ({ movie }: MovieDetailsProps) => {
               {data.overview || intl.formatMessage(messages.overviewunavailable)}
             </p>
             {sortedCrew.length > 0 && (
-              <>
-                <div className="mt-1 border-t border-white/[0.06]" />
-                <div className="pt-2">
+              <div className="relative -mt-[50px] pt-3">
+                <div className="absolute inset-x-0 top-0 border-t border-white/[0.12]" />
+                <div className="relative">
                   <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-white/30">Crew</h3>
                   <Link
