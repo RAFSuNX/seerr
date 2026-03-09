@@ -391,12 +391,12 @@ const RequestButton = ({
         }}
         onCancel={() => setShowRequest4kModal(false)}
       />
-      <div className="shrink-0">
+      <div className="min-w-max shrink-0">
         <ButtonWithDropdown
           text={
             <>
               {buttonOne.svg}
-              <span>{buttonOne.text}</span>
+              <span className="whitespace-nowrap">{buttonOne.text}</span>
             </>
           }
           onClick={buttonOne.action}
@@ -409,7 +409,7 @@ const RequestButton = ({
                   key={`request-option-${button.id}`}
                 >
                   {button.svg}
-                  <span>{button.text}</span>
+                  <span className="whitespace-nowrap">{button.text}</span>
                 </ButtonWithDropdown.Item>
               ))
             : null}
