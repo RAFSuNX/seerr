@@ -44,7 +44,7 @@ const Season = ({ seasonNumber, tvId }: SeasonProps) => {
                 className="flex flex-col space-y-4 py-4 xl:flex-row xl:space-x-4 xl:space-y-4"
                 key={`season-${seasonNumber}-episode-${episode.episodeNumber}`}
               >
-                <div className="flex-1">
+                <div className="xl:min-w-0">
                   <div className="flex flex-col space-y-2 xl:flex-row xl:items-center xl:space-x-2 xl:space-y-0">
                     <h3 className="text-lg">
                       {episode.episodeNumber} - {episode.name}
@@ -56,7 +56,7 @@ const Season = ({ seasonNumber, tvId }: SeasonProps) => {
                   {episode.overview && <p>{episode.overview}</p>}
                 </div>
                 {episode.stillPath && (
-                  <div className="relative aspect-video xl:h-32">
+                  <div className="relative aspect-video xl:h-32 xl:flex-shrink-0">
                     <CachedImage
                       type="tmdb"
                       className="rounded-lg object-contain"
