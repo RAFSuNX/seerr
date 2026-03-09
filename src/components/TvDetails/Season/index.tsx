@@ -46,14 +46,18 @@ const Season = ({ seasonNumber, tvId }: SeasonProps) => {
               >
                 <div className="xl:min-w-0 xl:max-w-3xl">
                   <div className="flex flex-col space-y-2 xl:flex-row xl:items-center xl:space-x-2 xl:space-y-0">
-                    <h3 className="text-lg">
+                    <h3 className="text-lg text-white">
                       {episode.episodeNumber} - {episode.name}
                     </h3>
                     {episode.airDate && (
                       <AirDateBadge airDate={episode.airDate} />
                     )}
                   </div>
-                  {episode.overview && <p>{episode.overview}</p>}
+                  {episode.overview && (
+                    <p className="text-sm leading-relaxed text-white/70">
+                      {episode.overview}
+                    </p>
+                  )}
                 </div>
                 {episode.stillPath && (
                   <div className="relative aspect-video xl:h-32 xl:flex-shrink-0">
