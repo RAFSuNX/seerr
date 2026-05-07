@@ -49,6 +49,7 @@ export class User {
     'jellyfinAuthToken',
     'plexToken',
     'settings',
+    'apiKey',
   ];
 
   public displayName: string;
@@ -100,6 +101,9 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true, select: false })
   public plexToken?: string | null;
+
+  @Column({ type: 'varchar', nullable: true, select: false, unique: true })
+  public apiKey?: string | null;
 
   @Column({ type: 'integer', default: 0 })
   public permissions = 0;
