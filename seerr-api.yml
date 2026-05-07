@@ -5283,6 +5283,80 @@ paths:
                       $ref: '#/components/schemas/MediaInfo'
                   playCount:
                     type: number
+  /user/{userId}/apikey:
+    get:
+      summary: Get user API key
+      description: |
+        Returns the personal API key for the given user.
+
+        Users can only fetch their own key. Requires the `MANAGE_USERS` permission to fetch another user's key.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apiKey:
+                    type: string
+                    nullable: true
+    post:
+      summary: Generate or regenerate user API key
+      description: |
+        Generates a new personal API key for the given user, replacing any existing one.
+
+        Users can only manage their own key. Requires the `MANAGE_USERS` permission to manage another user's key.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: New API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apiKey:
+                    type: string
+    delete:
+      summary: Revoke user API key
+      description: |
+        Revokes the personal API key for the given user.
+
+        Users can only revoke their own key. Requires the `MANAGE_USERS` permission to revoke another user's key.
+      tags:
+        - users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
   /search:
     get:
       summary: Search for movies, TV shows, or people

@@ -28,6 +28,7 @@ import { Router } from 'express';
 import gravatarUrl from 'gravatar-url';
 import { findIndex, sortBy } from 'lodash';
 import type { EntityManager } from 'typeorm';
+import { randomUUID } from 'crypto';
 import { In, Not } from 'typeorm';
 import userSettingsRoutes from './usersettings';
 
@@ -650,6 +651,106 @@ router.delete<{ id: string }>(
         status: 500,
         message: 'Something went wrong deleting the user',
       });
+    }
+  }
+);
+
+router.get<{ id: string }>(
+  '/:id/apikey',
+  isAuthenticated(),
+  async (req, res, next) => {
+    try {
+      const targetUserId = Number(req.params.id);
+
+      if (
+        req.user?.id !== targetUserId &&
+        !req.user?.hasPermission(Permission.MANAGE_USERS)
+      ) {
+        return next({ status: 403, message: 'Access denied.' });
+      }
+
+      const userRepository = getRepository(User);
+      const user = await userRepository
+        .createQueryBuilder('user')
+        .addSelect('user.apiKey')
+        .where('user.id = :id', { id: targetUserId })
+        .getOne();
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      return res.status(200).json({ apiKey: user.apiKey ?? null });
+    } catch {
+      return next({ status: 500, message: 'Failed to retrieve API key.' });
+    }
+  }
+);
+
+router.post<{ id: string }>(
+  '/:id/apikey',
+  isAuthenticated(),
+  async (req, res, next) => {
+    try {
+      const targetUserId = Number(req.params.id);
+
+      if (
+        req.user?.id !== targetUserId &&
+        !req.user?.hasPermission(Permission.MANAGE_USERS)
+      ) {
+        return next({ status: 403, message: 'Access denied.' });
+      }
+
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: targetUserId },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      user.apiKey = Buffer.from(`${Date.now()}${randomUUID()}`).toString(
+        'base64'
+      );
+      await userRepository.save(user);
+
+      return res.status(200).json({ apiKey: user.apiKey });
+    } catch {
+      return next({ status: 500, message: 'Failed to generate API key.' });
+    }
+  }
+);
+
+router.delete<{ id: string }>(
+  '/:id/apikey',
+  isAuthenticated(),
+  async (req, res, next) => {
+    try {
+      const targetUserId = Number(req.params.id);
+
+      if (
+        req.user?.id !== targetUserId &&
+        !req.user?.hasPermission(Permission.MANAGE_USERS)
+      ) {
+        return next({ status: 403, message: 'Access denied.' });
+      }
+
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOne({
+        where: { id: targetUserId },
+      });
+
+      if (!user) {
+        return next({ status: 404, message: 'User not found.' });
+      }
+
+      user.apiKey = null;
+      await userRepository.save(user);
+
+      return res.status(200).json({ success: true });
+    } catch {
+      return next({ status: 500, message: 'Failed to revoke API key.' });
     }
   }
 );
